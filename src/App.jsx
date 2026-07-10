@@ -356,13 +356,14 @@ const DISHES_DATA = [
   },
   {
     id: 'garlic_naan',
-    name: 'Garlic Naan',
-    price: '₹75',
+    name: 'Delicious Aloo Paratha',
+    price: '₹140',
     category: 'Breads',
-    ingredients: 'Refined flour, minced garlic, fresh coriander leaves, butter glaze.',
-    description: 'Our traditional tandoori naan topped with heaps of finely minced garlic and coriander.',
+    ingredients: 'Whole wheat flour, potatoes, coriander leaves, green chilies, red chili powder, garam masala, butter.',
+    description: 'Crispy, golden-brown pan-fried flatbread stuffed with a spiced mashed potato mixture.',
     photo: 'https://images.unsplash.com/photo-1608897013039-887f21d8c804?w=500&auto=format&fit=crop&q=80',
-    hasVideo: false
+    video: '/videos/garlic_naan.mp4',
+    hasVideo: true
   },
   {
     id: 'butter_naan',
@@ -454,13 +455,14 @@ const DISHES_DATA = [
   },
   {
     id: 'veg_biryani',
-    name: 'Veg Biryani',
+    name: 'Veg Dum Biryani',
     price: '₹290',
     category: 'Rice',
-    ingredients: 'Basmati rice, mixed seasonal vegetables, saffron, mint, rose water.',
-    description: 'Fragrant Basmati rice and vegetables layered and cooked on a slow fire (Dum) with saffron.',
+    ingredients: 'Basmati rice, mixed seasonal vegetables, onions, yogurt, mint leaves, whole garam masala, rose water.',
+    description: 'A fragrant and flavorful homemade Veg Dum Biryani loaded with fresh vegetables, slow-cooked to perfection.',
     photo: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=500&auto=format&fit=crop&q=80',
-    hasVideo: false
+    video: '/videos/veg_biryani.mp4',
+    hasVideo: true
   },
   {
     id: 'jeera_rice',
