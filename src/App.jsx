@@ -614,13 +614,14 @@ function DishCardMedia({ dish }) {
       ([entry]) => {
         if (videoRef.current) {
           if (entry.isIntersecting) {
+            // Play video only when it's highly visible in viewport (80%+)
             videoRef.current.play().catch(() => {})
           } else {
             videoRef.current.pause()
           }
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.8 } // High threshold ensures max 1-2 videos play simultaneously
     )
 
     if (videoRef.current) {
@@ -641,6 +642,7 @@ function DishCardMedia({ dish }) {
         loop
         muted
         playsInline
+        preload="none"
         poster={dish.photo}
       />
     )
