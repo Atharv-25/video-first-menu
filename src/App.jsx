@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 // Premium Custom Indian SVG Icon components
 const StartersIcon = () => (
@@ -67,228 +67,290 @@ const BeveragesIcon = () => (
   </svg>
 )
 
-// Complete database of 42 dishes with specific, distinct, accurate photo URLs
+const PlayIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style={{ marginLeft: '2px' }}>
+    <polygon points="6 3 20 12 6 21 6 3" />
+  </svg>
+)
+
+const CloseIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <line x1="18" y1="6" x2="6" y2="18" />
+    <line x1="6" y1="6" x2="18" y2="18" />
+  </svg>
+)
+
+// Complete database of 42 dishes with correct names, descriptions, and 22 active local loop videos
 const DISHES_DATA = [
-  // Starters
+  // Starters (10 items)
   {
-    id: 'paneer_tikka',
-    name: 'Paneer Tikka',
-    price: '₹280',
+    id: 'korean_paneer_sticks',
+    name: 'Korean Paneer Sticks',
+    price: '₹240',
     category: 'Starters',
-    ingredients: 'Cottage cheese cubes, bell peppers, onions, yogurt marinade, spices, lemon juice.',
-    description: 'Skewered cottage cheese cubes and vegetables marinated in a rich, spiced yogurt blend, charred to smoky perfection in our clay tandoor.',
-    photo: 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?w=500&auto=format&fit=crop&q=80'
+    ingredients: 'Paneer fingers, Gochujang paste, honey, soy sauce, garlic, sesame seeds, cornflour batter.',
+    description: 'Crispy Cottage Cheese Sticks tossed in a Spicy and savory Korean Sauce, topped with toasted sesame.',
+    photo: 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?w=500&auto=format&fit=crop&q=80',
+    video: '/videos/korean_paneer_sticks.mp4',
+    hasVideo: true
   },
   {
-    id: 'chicken_65',
-    name: 'Chicken 65',
-    price: '₹320',
+    id: 'spicy_coconut_mushroom',
+    name: 'Spicy Coconut Mushroom',
+    price: '₹260',
     category: 'Starters',
-    ingredients: 'Boneless chicken cubes, curry leaves, red chilies, garlic, yogurt sauce, secret spice mix.',
-    description: 'Crispy, deep-fried chicken chunks tossed in a fiery Southern-style yogurt sauce infused with fresh curry leaves and garlic.',
-    photo: 'https://images.unsplash.com/photo-1610057099443-fde8c4d50f91?w=500&auto=format&fit=crop&q=80'
+    ingredients: 'Button mushrooms, Kashmiri red chili, fresh coconut chunks, garlic, mustard seeds, curry leaves.',
+    description: 'Mushrooms pan-seared with Kashmiri red chili paste, fresh coconut flesh, and green curry leaves.',
+    photo: 'https://images.unsplash.com/photo-1610057099443-fde8c4d50f91?w=500&auto=format&fit=crop&q=80',
+    video: '/videos/spicy_coconut_mushroom.mp4',
+    hasVideo: true
   },
   {
-    id: 'masala_dosa',
-    name: 'Masala Dosa',
-    price: '₹160',
-    category: 'Starters',
-    ingredients: 'Fermented rice & lentil batter, spiced potato mash, mustard seeds, curry leaves, sambar, chutneys.',
-    description: 'A crispy, golden crepe made from fermented rice-lentil batter, wrapped around a spiced potato mash, served with sambar and fresh coconut chutney.',
-    photo: 'https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=500&auto=format&fit=crop&q=80'
-  },
-  {
-    id: 'samosa',
-    name: 'Samosa',
+    id: 'nepali_cucumber_achar',
+    name: 'Nepali Cucumber Achar',
     price: '₹90',
     category: 'Starters',
-    ingredients: 'Refined pastry crust, spiced potato & green peas filling, coriander, mint chutney, tamarind chutney.',
-    description: 'Flaky, pyramid-shaped golden pastries filled with a savory blend of potatoes and peas, served with chutneys.',
-    photo: 'https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=500&auto=format&fit=crop&q=80'
+    ingredients: 'Cucumbers, toasted sesame powder, green chilies, mustard oil, fenugreek seeds, lemon juice.',
+    description: 'A refreshing, traditional Nepali cucumber salad flavored with roasted sesame seeds, green chilies, and lemon juice.',
+    photo: 'https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=500&auto=format&fit=crop&q=80',
+    video: '/videos/nepali_cucumber_achar.mp4',
+    hasVideo: true
   },
   {
-    id: 'onion_bhaji',
-    name: 'Onion Bhaji',
-    price: '₹110',
+    id: 'soya_koliwada',
+    name: 'Soya Koliwada',
+    price: '₹180',
     category: 'Starters',
-    ingredients: 'Sliced red onions, gram flour batter, green chilies, ajwain seeds, mint chutney.',
-    description: 'Crispy onion fritters seasoned with ajwain and green chilies, fried golden brown in high-quality oil.',
-    photo: 'https://images.unsplash.com/photo-1606787366850-de6330128bfc?w=500&auto=format&fit=crop&q=80'
+    ingredients: 'Soya chunks, ginger-garlic paste, red chili powder, gram flour, lemon, whole garlic cloves.',
+    description: 'Soya chunks marinated in spicy Maharashtrian Spices and fried with whole garlic cloves until crispy.',
+    photo: 'https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=500&auto=format&fit=crop&q=80',
+    video: '/videos/soya_koliwada.mp4',
+    hasVideo: true
+  },
+  {
+    id: 'onion_palak_pakoda',
+    name: 'Onion Palak Pakoda',
+    price: '₹120',
+    category: 'Starters',
+    ingredients: 'Onions, baby spinach, gram flour (besan), green chilies, carom seeds (ajwain), spices.',
+    description: 'Crispy onion and spinach fritters seasoned with aromatic Indian spices, fried to golden perfection.',
+    photo: 'https://images.unsplash.com/photo-1606787366850-de6330128bfc?w=500&auto=format&fit=crop&q=80',
+    video: '/videos/onion_palak_pakoda.mp4',
+    hasVideo: true
+  },
+  {
+    id: 'peri_peri_paneer_fries',
+    name: 'Peri Peri Paneer Fries',
+    price: '₹220',
+    category: 'Starters',
+    ingredients: 'Paneer blocks, peri peri spice mix, cornstarch dust, olive oil.',
+    description: 'Cottage cheese logs fried to perfection and tossed in a spicy, fiery peri peri dust.',
+    photo: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=500&auto=format&fit=crop&q=80',
+    video: '/videos/peri_peri_paneer_fries.mp4',
+    hasVideo: true
+  },
+  {
+    id: 'cheesy_potatoes',
+    name: 'Cheesy Potatoes',
+    price: '₹160',
+    category: 'Starters',
+    ingredients: 'Potatoes, cheddar cheese, milk, butter, oregano, chili flakes, garlic.',
+    description: 'Diced potatoes tossed with herbs, simmered in a creamy milk sauce, and baked with heaps of cheese.',
+    photo: 'https://images.unsplash.com/photo-1601050690597-df056fb4ce78?w=500&auto=format&fit=crop&q=80',
+    video: '/videos/cheesy_potatoes.mp4',
+    hasVideo: true
+  },
+  {
+    id: 'cheese_chilli_sandwich',
+    name: 'Cheese Chilli Sandwich',
+    price: '₹150',
+    category: 'Starters',
+    ingredients: 'Bread slices, green capsicum, mozzarella cheese, chili flakes, butter, green chili.',
+    description: 'Street style cheese chilli sandwich made healthy with the twist of Hung Curd and paneer.',
+    photo: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=500&auto=format&fit=crop&q=80',
+    video: '/videos/cheese_chilli_sandwich.mp4',
+    hasVideo: true
   },
   {
     id: 'golgappa',
     name: 'Golgappa (Pani Puri)',
     price: '₹80',
     category: 'Starters',
-    ingredients: 'Semolina shells, spiced potato & chickpea filling, tangy mint water, sweet tamarind pulp.',
-    description: 'Crisp, hollow semolina spheres filled with potatoes and chickpeas, filled at the table with refreshing spiced mint and sweet tamarind waters.',
-    photo: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=500&auto=format&fit=crop&q=80'
-  },
-  {
-    id: 'samosa_chaat',
-    name: 'Samosa Chaat',
-    price: '₹140',
-    category: 'Starters',
-    ingredients: 'Crushed samosa, chickpea curry (Chole), sweet yogurt, mint chutney, tamarind sauce, sev, pomegranate.',
-    description: 'A chaotic medley of crushed samosas topped with hot chickpea curry, sweetened yogurt, tangy chutneys, sev, and fresh coriander.',
-    photo: 'https://images.unsplash.com/photo-1601050690597-df056fb4ce78?w=500&auto=format&fit=crop&q=80'
-  },
-  {
-    id: 'fish_amritsari',
-    name: 'Fish Amritsari',
-    price: '₹340',
-    category: 'Starters',
-    ingredients: 'Fish fillets, carom seeds, ginger-garlic, gram flour, lemon juice, chaat masala.',
-    description: 'Lightly battered and crispy-fried fish fillets seasoned with carom seeds and traditional Punjabi spices.',
-    photo: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=500&auto=format&fit=crop&q=80'
+    ingredients: 'Semolina shells, potato mash, tangy mint water, tamarind pulp.',
+    description: 'Crisp, hollow spheres filled with potatoes and served with refreshing spiced mint and sweet waters.',
+    photo: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=500&auto=format&fit=crop&q=80',
+    hasVideo: false
   },
   {
     id: 'paneer_pakora',
     name: 'Paneer Pakora',
     price: '₹180',
     category: 'Starters',
-    ingredients: 'Cottage cheese slices, spiced gram flour batter, mint dip.',
-    description: 'Soft cottage cheese slices stuffed with mint chutney, dipped in spiced chickpea batter, fried golden crisp.',
-    photo: 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=500&auto=format&fit=crop&q=80'
-  },
-  {
-    id: 'hara_bhara_kabab',
-    name: 'Hara Bhara Kabab',
-    price: '₹190',
-    category: 'Starters',
-    ingredients: 'Spinach, green peas, potatoes, fresh coriander, ginger, cashew nut topping.',
-    description: 'Healthy pan-seared patties of spinach, green peas, and potatoes, spiced lightly and topped with a whole cashew.',
-    photo: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=500&auto=format&fit=crop&q=80'
+    ingredients: 'Cottage cheese slices, gram flour batter, mint dip.',
+    description: 'Soft cottage cheese slices stuffed with mint chutney, dipped in spiced chickpea batter, fried golden.',
+    photo: 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=500&auto=format&fit=crop&q=80',
+    hasVideo: false
   },
 
-  // Mains
+  // Mains (13 items)
   {
     id: 'butter_chicken',
-    name: 'Butter Chicken',
+    name: 'Champaran Chicken Curry',
     price: '₹380',
     category: 'Mains',
-    ingredients: 'Tandoori chicken pieces, tomato paste, cashew nut paste, fresh cream, butter, fenugreek.',
-    description: 'Tender tandoori-grilled chicken simmered in our signature velvet-smooth gravy of ripe tomatoes, butter, and cashew cream.',
-    photo: 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=500&auto=format&fit=crop&q=80'
+    ingredients: 'Chicken, whole garlic bulbs, mustard oil, onions, ginger, special spice mix.',
+    description: 'A slow-cooked, rustic Bihari chicken curry prepared in a sealed clay pot with whole garlic bulbs and mustard oil.',
+    photo: 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=500&auto=format&fit=crop&q=80',
+    video: '/videos/butter_chicken.mp4',
+    hasVideo: true
+  },
+  {
+    id: 'soya_sukkha',
+    name: 'Soya Sukkha',
+    price: '₹260',
+    category: 'Mains',
+    ingredients: 'Soya chunks, grated fresh coconut, Mangalorean spice mix, curry leaves, red onions.',
+    description: 'A vegetarian, high-protein dry dish crafted with soya chunks, cooked with traditional Mangalorean spices.',
+    photo: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=500&auto=format&fit=crop&q=80',
+    video: '/videos/soya_sukkha.mp4',
+    hasVideo: true
+  },
+  {
+    id: 'kakdicha_korda',
+    name: 'Kakdicha Korda',
+    price: '₹190',
+    category: 'Mains',
+    ingredients: 'Cucumbers, gram flour (besan), green chilies, mustard seeds, coriander leaves, ghee.',
+    description: 'Freshly grated cucumber cooked in spicy Maharashtrian spices and gram flour, slow-cooked to perfection.',
+    photo: 'https://images.unsplash.com/photo-1626132647523-66f5bf380027?w=500&auto=format&fit=crop&q=80',
+    video: '/videos/kakdicha_korda.mp4',
+    hasVideo: true
+  },
+  {
+    id: 'kathiyawadi_lasooni_aloo',
+    name: 'Kathiyawadi Lasooni Aloo',
+    price: '₹210',
+    category: 'Mains',
+    ingredients: 'Baby potatoes, garlic paste, red chili powder, cumin, coriander powder, mustard oil.',
+    description: 'Baby potatoes tossed in a spicy, garlicky Kathiyawadi curry base cooked to perfection.',
+    photo: 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=500&auto=format&fit=crop&q=80',
+    video: '/videos/kathiyawadi_lasooni_aloo.mp4',
+    hasVideo: true
+  },
+  {
+    id: 'veg_fish_curry',
+    name: 'Veg Fish Curry',
+    price: '₹290',
+    category: 'Mains',
+    ingredients: 'Raw green banana, fresh coconut paste, tamarind pulp, red chili, mustard seeds.',
+    description: 'Crispy fried raw banana slices simmered in a delightful, tangy Maharashtrian coconut-based curry.',
+    photo: 'https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?w=500&auto=format&fit=crop&q=80',
+    video: '/videos/veg_fish_curry.mp4',
+    hasVideo: true
+  },
+  {
+    id: 'spicy_asian_noodles',
+    name: 'Spicy Asian Noodles',
+    price: '₹240',
+    category: 'Mains',
+    ingredients: 'Shirataki noodles, peanut butter, chili oil, soy sauce, garlic, scallions, sesame oil.',
+    description: 'Low-calorie Shirataki noodles made in a spicy Korean peanut sauce, served hot.',
+    photo: 'https://images.unsplash.com/photo-1585238342024-78d387f4a707?w=500&auto=format&fit=crop&q=80',
+    video: '/videos/spicy_asian_noodles.mp4',
+    hasVideo: true
   },
   {
     id: 'dal_makhani',
     name: 'Dal Makhani',
     price: '₹260',
     category: 'Mains',
-    ingredients: 'Whole black lentils, red kidney beans, butter, cream, slow-cooked spices, ginger.',
-    description: 'Black lentils and red kidney beans slow-cooked overnight with spices, finished with fresh cream and churned farm butter.',
-    photo: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=500&auto=format&fit=crop&q=80'
+    ingredients: 'Whole black lentils, kidney beans, cream, butter, slow spices.',
+    description: 'Black lentils slow-cooked overnight with spices, finished with fresh cream and farm butter.',
+    photo: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=500&auto=format&fit=crop&q=80',
+    hasVideo: false
   },
   {
     id: 'chole_bhature',
     name: 'Chole Bhature',
     price: '₹220',
     category: 'Mains',
-    ingredients: 'Chickpeas, onion-tomato gravy, ginger-garlic paste, refined flour fried bread, pickles.',
-    description: 'A classic Punjabi combination of spicy, tangy chickpea curry served with two puffed, golden-fried leavened flatbreads.',
-    photo: 'https://images.unsplash.com/photo-1626132647523-66f5bf380027?w=500&auto=format&fit=crop&q=80'
-  },
-  {
-    id: 'pav_bhaji',
-    name: 'Pav Bhaji',
-    price: '₹180',
-    category: 'Mains',
-    ingredients: 'Mashed mixed vegetables, butter, Pav Bhaji masala, red onions, lemon, butter-toasted rolls.',
-    description: 'A thick, buttery vegetable mash cooked with special spices on a flat tawa, served with fluffy, butter-toasted brioche-style rolls.',
-    photo: 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=500&auto=format&fit=crop&q=80'
+    ingredients: 'Spicy chickpeas, refined flour fried bread, pickles.',
+    description: 'A classic Punjabi combination of spicy chickpea curry served with puffed, golden-fried flatbreads.',
+    photo: 'https://images.unsplash.com/photo-1626132647523-66f5bf380027?w=500&auto=format&fit=crop&q=80',
+    hasVideo: false
   },
   {
     id: 'palak_paneer',
     name: 'Palak Paneer',
     price: '₹290',
     category: 'Mains',
-    ingredients: 'Spinach puree, cottage cheese cubes, garlic, cumin, heavy cream.',
-    description: 'Cubes of cottage cheese simmered in a silky, slow-cooked baby spinach puree scented with golden garlic.',
-    photo: 'https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?w=500&auto=format&fit=crop&q=80'
+    ingredients: 'Spinach puree, cottage cheese, garlic, cumin, heavy cream.',
+    description: 'Cubes of cottage cheese simmered in a silky spinach puree scented with golden garlic.',
+    photo: 'https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?w=500&auto=format&fit=crop&q=80',
+    hasVideo: false
   },
   {
     id: 'chana_masala',
     name: 'Chana Masala',
     price: '₹210',
     category: 'Mains',
-    ingredients: 'White chickpeas, roasted pomegranate powder, ginger, onion-tomato base, spices.',
-    description: 'Soft chickpeas simmered in a dark, highly seasoned onion-tomato gravy flavored with black cardamom and dry pomegranate.',
-    photo: 'https://images.unsplash.com/photo-1585238342024-78d387f4a707?w=500&auto=format&fit=crop&q=80'
-  },
-  {
-    id: 'aloo_gobi',
-    name: 'Aloo Gobi',
-    price: '₹190',
-    category: 'Mains',
-    ingredients: 'Potato wedges, cauliflower florets, ginger juliennes, turmeric, garam masala.',
-    description: 'A comforting, dry stir-fry of fresh cauliflower florets and potatoes cooked with turmeric, cumin, and ginger.',
-    photo: 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=500&auto=format&fit=crop&q=80'
+    ingredients: 'White chickpeas, roasted pomegranate powder, ginger, onion-tomato curry.',
+    description: 'Soft chickpeas simmered in a dark, seasoned onion-tomato gravy with dry pomegranate.',
+    photo: 'https://images.unsplash.com/photo-1585238342024-78d387f4a707?w=500&auto=format&fit=crop&q=80',
+    hasVideo: false
   },
   {
     id: 'lamb_rogan_josh',
     name: 'Lamb Rogan Josh',
     price: '₹440',
     category: 'Mains',
-    ingredients: 'Tender lamb chunks, Kashmiri red chilies, dry ginger, fennel powder, saffron.',
-    description: 'A signature Kashmiri slow-cooked lamb curry colored naturally with alkanet root and Kashmiri red chilies, rich in fennel flavor.',
-    photo: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=500&auto=format&fit=crop&q=80'
-  },
-  {
-    id: 'tandoori_chicken',
-    name: 'Tandoori Chicken',
-    price: '₹360',
-    category: 'Mains',
-    ingredients: 'Chicken bone-in, Kashmiri chili paste, thick yogurt, tandoori masala, lemon.',
-    description: 'Succulent bone-in chicken marinated in double-strained yogurt and high-heat roasted spices, char-grilled inside our clay oven.',
-    photo: 'https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=500&auto=format&fit=crop&q=80'
+    ingredients: 'Tender lamb chunks, Kashmiri red chilies, dry ginger, fennel, saffron.',
+    description: 'A signature Kashmiri slow-cooked lamb curry colored naturally with Kashmiri red chilies.',
+    photo: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=500&auto=format&fit=crop&q=80',
+    hasVideo: false
   },
   {
     id: 'paneer_butter_masala',
     name: 'Paneer Butter Masala',
     price: '₹310',
     category: 'Mains',
-    ingredients: 'Cottage cheese, sweet tomato gravy, rich cream, butter, dried fenugreek.',
-    description: 'Fresh cottage cheese chunks cooked in a rich, creamy, and slightly sweet onion-tomato sauce with pure farm butter.',
-    photo: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=500&auto=format&fit=crop&q=80'
-  },
-  {
-    id: 'kadai_paneer',
-    name: 'Kadai Paneer',
-    price: '₹300',
-    category: 'Mains',
-    ingredients: 'Paneer cubes, freshly ground Kadai spices, bell peppers, thick onion gravy.',
-    description: 'Cottage cheese cubes tossed with bell peppers and onions in a spicy, freshly pounded coriander and red chili masala.',
-    photo: 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?w=500&auto=format&fit=crop&q=80'
+    ingredients: 'Cottage cheese, sweet tomato gravy, rich cream, butter.',
+    description: 'Fresh cottage cheese chunks cooked in a rich, creamy onion-tomato sauce with pure butter.',
+    photo: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=500&auto=format&fit=crop&q=80',
+    hasVideo: false
   },
   {
     id: 'lamb_bhuna',
     name: 'Lamb Bhuna',
     price: '₹460',
     category: 'Mains',
-    ingredients: 'Tender lamb pieces, caramelized onions, thick garlic-ginger paste, roasted spices.',
-    description: 'Succulent pieces of lamb slow-roasted (Bhuna) in a heavy-bottom pot with thick caramelized onion paste and aromatic dry spices.',
-    photo: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=500&auto=format&fit=crop&q=80'
-  },
-  {
-    id: 'chicken_korma',
-    name: 'Chicken Korma',
-    price: '₹390',
-    category: 'Mains',
-    ingredients: 'Chicken pieces, yogurt marinade, brown onion paste, green cardamom, almond sauce.',
-    description: 'A rich royal Mughlai dish of chicken cooked in a highly aromatic gravy of brown onions, cashew paste, and green cardamom.',
-    photo: 'https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?w=500&auto=format&fit=crop&q=80'
+    ingredients: 'Tender lamb pieces, caramelized onions, garlic-ginger paste, roasted spices.',
+    description: 'Succulent pieces of lamb slow-roasted in a heavy pot with caramelized onions.',
+    photo: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=500&auto=format&fit=crop&q=80',
+    hasVideo: false
   },
 
-  // Breads
+  // Breads (5 items)
+  {
+    id: 'thecha_bati',
+    name: 'Thecha Bati',
+    price: '₹140',
+    category: 'Breads',
+    ingredients: 'Whole wheat flour, green chilies, garlic cloves, roasted peanuts, ghee, salt.',
+    description: 'Spicy wheat dough balls filled with Maharashtrian green chili and garlic Thecha, roasted golden.',
+    photo: 'https://images.unsplash.com/photo-1601050690597-df056fb4ce78?w=500&auto=format&fit=crop&q=80',
+    video: '/videos/thecha_bati.mp4',
+    hasVideo: true
+  },
   {
     id: 'tandoori_naan',
     name: 'Tandoori Naan',
     price: '₹60',
     category: 'Breads',
     ingredients: 'Refined flour, milk, yogurt, butter glaze.',
-    description: 'Soft and pillowy leavened flatbread slapped onto the inner walls of our high-heat clay tandoor, brushed with melted butter.',
-    photo: 'https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?w=500&auto=format&fit=crop&q=80'
+    description: 'Soft leavened flatbread baked on the walls of our tandoor, brushed with butter.',
+    photo: 'https://images.unsplash.com/photo-1593560708920-61dd98c46a4e?w=500&auto=format&fit=crop&q=80',
+    hasVideo: false
   },
   {
     id: 'garlic_naan',
@@ -296,8 +358,9 @@ const DISHES_DATA = [
     price: '₹75',
     category: 'Breads',
     ingredients: 'Refined flour, minced garlic, fresh coriander leaves, butter glaze.',
-    description: 'Our traditional tandoori naan topped with heaps of finely minced garlic and fresh coriander, baked hot and glazed.',
-    photo: 'https://images.unsplash.com/photo-1608897013039-887f21d8c804?w=500&auto=format&fit=crop&q=80'
+    description: 'Our traditional tandoori naan topped with heaps of finely minced garlic and coriander.',
+    photo: 'https://images.unsplash.com/photo-1608897013039-887f21d8c804?w=500&auto=format&fit=crop&q=80',
+    hasVideo: false
   },
   {
     id: 'butter_naan',
@@ -305,17 +368,9 @@ const DISHES_DATA = [
     price: '₹65',
     category: 'Breads',
     ingredients: 'Refined flour dough, milk wash, salted butter glaze.',
-    description: 'A traditional soft naan baked in the clay oven, generously coated with premium salted butter.',
-    photo: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=500&auto=format&fit=crop&q=80'
-  },
-  {
-    id: 'lachha_paratha',
-    name: 'Lachha Paratha',
-    price: '₹80',
-    category: 'Breads',
-    ingredients: 'Whole wheat layered dough, ghee, roasted carom seeds.',
-    description: 'Multi-layered, flaky flatbread made from whole wheat flour, brushed with pure ghee and cooked crispy.',
-    photo: 'https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=500&auto=format&fit=crop&q=80'
+    description: 'A traditional soft naan baked in the clay oven, coated with premium melted butter.',
+    photo: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=500&auto=format&fit=crop&q=80',
+    hasVideo: false
   },
   {
     id: 'papadum',
@@ -323,113 +378,173 @@ const DISHES_DATA = [
     price: '₹40',
     category: 'Breads',
     ingredients: 'Black gram lentil flour, cracked black pepper, roasted cumin.',
-    description: 'Crisp, roasted black gram lentil wafers speckled with cracked black pepper, served alongside sweet mango chutney.',
-    photo: 'https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?w=500&auto=format&fit=crop&q=80'
+    description: 'Crisp, roasted black gram lentil wafers speckled with cracked black pepper.',
+    photo: 'https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?w=500&auto=format&fit=crop&q=80',
+    hasVideo: false
   },
 
-  // Rice
+  // Rice (9 items)
+  {
+    id: 'tomato_rice',
+    name: 'Tomato Rice',
+    price: '₹180',
+    category: 'Rice',
+    ingredients: 'Basmati rice, fresh tomatoes, mustard seeds, curry leaves, turmeric, green cardamoms, ghee.',
+    description: 'A perfect one-pot rice recipe featuring fresh tomatoes and aromatic Indian spices.',
+    photo: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=500&auto=format&fit=crop&q=80',
+    video: '/videos/tomato_rice.mp4',
+    hasVideo: true
+  },
+  {
+    id: 'pahadi_raita',
+    name: 'Pahadi Raita',
+    price: '₹80',
+    category: 'Rice',
+    ingredients: 'Yogurt, cucumber, black mustard seeds, fresh turmeric, green chilies, coriander.',
+    description: 'Traditional Kumaoni mountain-style spiced yogurt condiment loaded with grated cucumbers and local mustard.',
+    photo: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500&auto=format&fit=crop&q=80',
+    video: '/videos/pahadi_raita.mp4',
+    hasVideo: true
+  },
+  {
+    id: 'paneer_schezwan_fried_rice',
+    name: 'Paneer Schezwan Fried Rice',
+    price: '₹220',
+    category: 'Rice',
+    ingredients: 'Basmati rice, paneer cubes, Schezwan chili sauce, spring onions, capsicum, soy sauce.',
+    description: 'Desi-Chinese style wok-fried rice tossed with golden paneer cubes, veggies, and a spicy Schezwan sauce.',
+    photo: 'https://images.unsplash.com/photo-1633945274405-b6c8069047b0?w=500&auto=format&fit=crop&q=80',
+    video: '/videos/paneer_schezwan_fried_rice.mp4',
+    hasVideo: true
+  },
+  {
+    id: 'phodnicha_batate_bhaat',
+    name: 'Phodnicha Batate Bhaat',
+    price: '₹170',
+    category: 'Rice',
+    ingredients: 'Rice, potatoes, turmeric, mustard seeds, curry leaves, green chilies, ghee.',
+    description: 'Maharashtrian style tempered rice tossed with thinly sliced potato pieces and golden turmeric.',
+    photo: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=500&auto=format&fit=crop&q=80',
+    video: '/videos/phodnicha_batate_bhaat.mp4',
+    hasVideo: true
+  },
+  {
+    id: 'chana_yakhni_pulao',
+    name: 'Chana Yakhni Pulao',
+    price: '₹210',
+    category: 'Rice',
+    ingredients: 'Basmati rice, boiled chickpeas, fennel seeds, coriander seeds, cardamom, yogurt, ghee.',
+    description: 'A fragrant, one-pot chickpea rice preparation cooked in a slow-simmered spiced broth.',
+    photo: 'https://images.unsplash.com/photo-1633945274405-b6c8069047b0?w=500&auto=format&fit=crop&q=80',
+    video: '/videos/chana_yakhni_pulao.mp4',
+    hasVideo: true
+  },
+  {
+    id: 'chicken_biryani',
+    name: 'Muradabadi Chicken Biryani',
+    price: '₹340',
+    category: 'Rice',
+    ingredients: 'Chicken, Basmati rice, green chilies, whole garam masala, ginger-garlic paste, curd.',
+    description: 'A lighter, white-spiced chicken biryani cooked with green chilies, whole spices, and chicken stock.',
+    photo: 'https://images.unsplash.com/photo-1633945274405-b6c8069047b0?w=500&auto=format&fit=crop&q=80',
+    video: '/videos/chicken_biryani.mp4',
+    hasVideo: true
+  },
   {
     id: 'veg_biryani',
     name: 'Veg Biryani',
     price: '₹290',
     category: 'Rice',
-    ingredients: 'Long grain Basmati rice, mixed seasonal vegetables, saffron, mint, fried onions, rose water.',
-    description: 'Fragrant Basmati rice and spiced seasonal vegetables layered in a clay pot, cooked on a slow fire (Dum) with saffron and mint.',
-    photo: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=500&auto=format&fit=crop&q=80'
-  },
-  {
-    id: 'chicken_biryani',
-    name: 'Chicken Biryani',
-    price: '₹340',
-    category: 'Rice',
-    ingredients: 'Basmati rice, chicken marinated in yogurt, fried onions, mint, kewra water.',
-    description: 'A classic recipe of Basmati rice layered with spiced marinated chicken and slow-cooked in a sealed pot.',
-    photo: 'https://images.unsplash.com/photo-1633945274405-b6c8069047b0?w=500&auto=format&fit=crop&q=80'
+    ingredients: 'Basmati rice, mixed seasonal vegetables, saffron, mint, rose water.',
+    description: 'Fragrant Basmati rice and vegetables layered and cooked on a slow fire (Dum) with saffron.',
+    photo: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=500&auto=format&fit=crop&q=80',
+    hasVideo: false
   },
   {
     id: 'jeera_rice',
     name: 'Jeera Rice',
     price: '₹150',
     category: 'Rice',
-    ingredients: 'Basmati rice, cumin seeds, pure ghee, coriander garnish.',
-    description: 'Fragrant steamed Basmati rice tempered in pure ghee with roasted cumin seeds and fresh green coriander.',
-    photo: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=500&auto=format&fit=crop&q=80'
+    ingredients: 'Basmati rice, cumin seeds, pure ghee, coriander.',
+    description: 'Steamed Basmati rice tempered in pure ghee with roasted cumin seeds.',
+    photo: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=500&auto=format&fit=crop&q=80',
+    hasVideo: false
   },
   {
     id: 'kashmiri_pulao',
     name: 'Kashmiri Pulao',
     price: '₹240',
     category: 'Rice',
-    ingredients: 'Long grain rice, saffron water, mixed dry fruits, fresh pomegranate seeds.',
-    description: 'A festive sweet rice preparation loaded with saffron, raisins, almonds, walnuts, and topped with ruby pomegranate seeds.',
-    photo: 'https://images.unsplash.com/photo-1633945274405-b6c8069047b0?w=500&auto=format&fit=crop&q=80'
-  },
-  {
-    id: 'raita',
-    name: 'Raita',
-    price: '₹70',
-    category: 'Rice',
-    ingredients: 'Whipped yogurt, roasted cumin, black salt, cucumber bits or boondi, mint.',
-    description: 'Cool, whipped yogurt condiment seasoned with roasted cumin and dry mint, perfect to balance the spice of biryani.',
-    photo: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500&auto=format&fit=crop&q=80'
+    ingredients: 'Rice, saffron water, mixed dry fruits, pomegranate seeds.',
+    description: 'A festive rice preparation loaded with saffron, raisins, almonds, and pomegranate.',
+    photo: 'https://images.unsplash.com/photo-1633945274405-b6c8069047b0?w=500&auto=format&fit=crop&q=80',
+    hasVideo: false
   },
 
-  // Desserts
+  // Desserts (5 items)
+  {
+    id: 'matka_kulfi',
+    name: 'Matka Kulfi',
+    price: '₹120',
+    category: 'Desserts',
+    ingredients: 'Full cream milk, green cardamom powder, saffron, pistachios, almonds, sugar.',
+    description: 'Traditional Indian ice cream made with condensed milk and dry fruits, served chilled in a clay pot.',
+    photo: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=500&auto=format&fit=crop&q=80',
+    video: '/videos/matka_kulfi.mp4',
+    hasVideo: true
+  },
   {
     id: 'gulab_jamun',
     name: 'Gulab Jamun',
     price: '₹120',
     category: 'Desserts',
-    ingredients: 'Reduced milk solids (Khoya), cardamoms, sugar syrup, saffron strands, rose water, pistachios.',
-    description: 'Warm, soft milk-solid dumplings golden-fried and steeped in a sticky, fragrant syrup infused with cardamom and saffron.',
-    photo: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=500&auto=format&fit=crop&q=80'
+    ingredients: 'Reduced milk solids, cardamoms, sugar syrup, pistachios.',
+    description: 'Warm, soft milk-solid dumplings golden-fried and steeped in a sugar syrup.',
+    photo: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=500&auto=format&fit=crop&q=80',
+    hasVideo: false
   },
   {
     id: 'rasgulla',
     name: 'Rasgulla',
     price: '₹110',
     category: 'Desserts',
-    ingredients: 'Cottage cheese balls (Chenna), light sugar syrup, rose flavor.',
-    description: 'Spongy, white cottage cheese spheres boiled in a light, delicate sugar syrup flavored with rose water.',
-    photo: 'https://images.unsplash.com/photo-1587314168485-3236d6710814?w=500&auto=format&fit=crop&q=80'
+    ingredients: 'Cottage cheese balls, light sugar syrup, rose flavor.',
+    description: 'Spongy, white cottage cheese spheres boiled in a light sugar syrup flavored with rose.',
+    photo: 'https://images.unsplash.com/photo-1587314168485-3236d6710814?w=500&auto=format&fit=crop&q=80',
+    hasVideo: false
   },
   {
     id: 'rasmalai',
     name: 'Rasmalai',
     price: '₹140',
     category: 'Desserts',
-    ingredients: 'Cottage cheese discs, sweetened saffron milk (Rabri), pistachios, almonds.',
-    description: 'Soft, flattened cottage cheese dumplings steeped in sweet, cardamom-scented condensed milk, served chilled with nuts.',
-    photo: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=500&auto=format&fit=crop&q=80'
+    ingredients: 'Cottage cheese discs, sweetened saffron milk, pistachios, almonds.',
+    description: 'Soft cottage cheese dumplings steeped in sweet, cardamom-scented milk, served chilled.',
+    photo: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=500&auto=format&fit=crop&q=80',
+    hasVideo: false
   },
   {
     id: 'gajar_halwa',
     name: 'Gajar Ka Halwa',
     price: '₹150',
     category: 'Desserts',
-    ingredients: 'Grated red carrots, condensed milk, ghee, golden raisins, nuts.',
-    description: 'A warm winter delicacy made by slow-cooking sweet grated red carrots in milk, ghee, and sugar, garnished with dry fruits.',
-    photo: 'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=500&auto=format&fit=crop&q=80'
-  },
-  {
-    id: 'kheer',
-    name: 'Kheer',
-    price: '₹130',
-    category: 'Desserts',
-    ingredients: 'Basmati rice grain, condensed milk, green cardamom, almonds, pistachios, saffron.',
-    description: 'Slow-simmered rice pudding enriched with condensed milk, infused with green cardamom and saffron, served chilled.',
-    photo: 'https://images.unsplash.com/photo-1506084868230-bb9d95c24759?w=500&auto=format&fit=crop&q=80'
+    ingredients: 'Grated carrots, milk, ghee, raisins, nuts.',
+    description: 'A warm winter delicacy made by slow-cooking sweet grated red carrots in milk and ghee.',
+    photo: 'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=500&auto=format&fit=crop&q=80',
+    hasVideo: false
   },
 
-  // Beverages
+  // Beverages (5 items)
   {
     id: 'masala_chai',
     name: 'Masala Chai',
     price: '₹80',
     category: 'Beverages',
     ingredients: 'Assam black tea, fresh milk, ginger, crushed cardamom, cloves, cinnamon, sugar.',
-    description: 'Strong, aromatic black tea brewed with fresh milk, crushed ginger, and our house blend of warming spices.',
-    photo: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=500&auto=format&fit=crop&q=80'
+    description: 'Strong, aromatic black tea brewed with fresh milk and our house blend of spices.',
+    photo: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=500&auto=format&fit=crop&q=80',
+    video: '/videos/masala_chai.mp4',
+    hasVideo: true
   },
   {
     id: 'cold_coffee',
@@ -437,8 +552,10 @@ const DISHES_DATA = [
     price: '₹140',
     category: 'Beverages',
     ingredients: 'Espresso shot, whole milk, chocolate syrup, vanilla ice cream scoop, ice cubes.',
-    description: 'Creamy, frothy blended coffee made with rich espresso, cold milk, and chocolate, topped with a scoop of vanilla ice cream.',
-    photo: 'https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=500&auto=format&fit=crop&q=80'
+    description: 'Creamy, frothy coffee blended with rich espresso, cold milk, and chocolate.',
+    photo: 'https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=500&auto=format&fit=crop&q=80',
+    video: '/videos/cold_coffee.mp4',
+    hasVideo: true
   },
   {
     id: 'mango_lassi',
@@ -446,35 +563,29 @@ const DISHES_DATA = [
     price: '₹120',
     category: 'Beverages',
     ingredients: 'Alphonso mango pulp, thick yogurt, milk, cardamoms, sugar.',
-    description: 'A thick, velvety yogurt drink blended with sweet Alphonso mango pulp and cardamom.',
-    photo: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=500&auto=format&fit=crop&q=80'
+    description: 'A thick, creamy yogurt drink blended with sweet Alphonso mango pulp.',
+    photo: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=500&auto=format&fit=crop&q=80',
+    hasVideo: false
   },
   {
     id: 'sweet_lassi',
     name: 'Sweet Lassi',
     price: '₹100',
     category: 'Beverages',
-    ingredients: 'Whipped thick yogurt, sugar, rose water, cardamom cream.',
-    description: 'Traditional Punjabi sweet beverage made by churning thick yogurt with sugar and cardamoms, topped with thick cream (Malai).',
-    photo: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=500&auto=format&fit=crop&q=80'
+    ingredients: 'Whipped yogurt, sugar, rose water, cardamom cream.',
+    description: 'Traditional Punjabi sweet beverage made by churning thick yogurt with rose water.',
+    photo: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=500&auto=format&fit=crop&q=80',
+    hasVideo: false
   },
   {
     id: 'jaljeera',
     name: 'Jaljeera',
     price: '₹70',
     category: 'Beverages',
-    ingredients: 'Tangy dry mango powder, fresh mint paste, cumin seeds, lemon juice, boondi.',
-    description: 'A refreshing, chilled Indian welcome drink made with cumin, black salt, fresh mint, coriander, and lemon juice.',
-    photo: 'https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=500&auto=format&fit=crop&q=80'
-  },
-  {
-    id: 'filter_coffee',
-    name: 'Filter Coffee',
-    price: '₹90',
-    category: 'Beverages',
-    ingredients: 'South Indian coffee decoction, frothed milk, chicory.',
-    description: 'Traditional South Indian coffee brewed in a brass filter, mixed with frothed hot milk, served in a steel tumbler.',
-    photo: 'https://images.unsplash.com/photo-1541167760496-1628856ab772?w=500&auto=format&fit=crop&q=80'
+    ingredients: 'Tangy mango powder, mint paste, cumin seeds, lemon juice, boondi.',
+    description: 'A refreshing, chilled Indian welcome drink flavored with cumin, black salt, and fresh mint.',
+    photo: 'https://images.unsplash.com/photo-1536256263959-770b48d82b0a?w=500&auto=format&fit=crop&q=80',
+    hasVideo: false
   }
 ]
 
@@ -488,16 +599,78 @@ const CATEGORIES_DATA = [
   { id: 'Beverages', name: 'Beverages', icon: <BeveragesIcon /> }
 ]
 
+// Custom high-performance intersection observer media item
+function DishCardMedia({ dish }) {
+  const videoRef = useRef(null)
+
+  useEffect(() => {
+    if (!dish.hasVideo) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (videoRef.current) {
+          if (entry.isIntersecting) {
+            videoRef.current.play().catch(() => {})
+          } else {
+            videoRef.current.pause()
+          }
+        }
+      },
+      { threshold: 0.1 }
+    )
+
+    if (videoRef.current) {
+      observer.observe(videoRef.current)
+    }
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [dish.hasVideo])
+
+  if (dish.hasVideo) {
+    return (
+      <video
+        ref={videoRef}
+        className="dish-grid-img"
+        src={dish.video}
+        loop
+        muted
+        playsInline
+        poster={dish.photo}
+      />
+    )
+  }
+
+  return <img className="dish-grid-img" src={dish.photo} alt={dish.name} />
+}
+
 function App() {
   const [activeCategory, setActiveCategory] = useState('Starters')
   const [activeDish, setActiveDish] = useState(null)
+  
+  // States for spring video lightbox
+  const [lightboxVideo, setLightboxVideo] = useState(null)
+  const [isClosing, setIsClosing] = useState(false)
 
   // Filter dishes by active category
   const filteredDishes = DISHES_DATA.filter(dish => dish.category === activeCategory)
 
-  // Open bottom details drawer
-  const openDetail = (dish) => {
-    setActiveDish(dish)
+  // Handles smooth popup close transition
+  const closeLightbox = () => {
+    setIsClosing(true)
+    setTimeout(() => {
+      setLightboxVideo(null)
+      setIsClosing(false)
+    }, 300) // matches index.css transition times
+  }
+
+  const handleCardClick = (dish) => {
+    if (dish.hasVideo) {
+      setLightboxVideo(dish)
+    } else {
+      setActiveDish(dish)
+    }
   }
 
   return (
@@ -536,16 +709,24 @@ function App() {
         </div>
       </div>
 
-      {/* 4. TWO-COLUMN DISH GRID */}
+      {/* 4. TWO-COLUMN DISH GRID (Videos play inline on repeat) */}
       <main className="dishes-grid">
         {filteredDishes.map((dish) => (
           <div 
             key={dish.id} 
             className="dish-grid-card glass glass-interactive"
-            onClick={() => openDetail(dish)}
+            onClick={() => handleCardClick(dish)}
           >
             <div className="dish-grid-media-box">
-              <img className="dish-grid-img" src={dish.photo} alt={dish.name} />
+              <DishCardMedia dish={dish} />
+              
+              {dish.hasVideo && (
+                <div className="dish-grid-play-overlay">
+                  <div className="dish-grid-play-circle">
+                    <PlayIcon />
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="dish-grid-info">
@@ -560,7 +741,7 @@ function App() {
         ))}
       </main>
 
-      {/* 5. BOTTOM SHEET/DRAWER OVERLAY */}
+      {/* 5. BOTTOM SHEET/DRAWER OVERLAY (For static photos details) */}
       {activeDish && (
         <div className="backdrop-fade" onClick={() => setActiveDish(null)}>
           <div className="drawer-content glass" onClick={(e) => e.stopPropagation()}>
@@ -581,6 +762,43 @@ function App() {
             <button className="drawer-close-btn" onClick={() => setActiveDish(null)}>
               Close Details
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* 6. SPRING VIDEO LIGHTBOX OVERLAY (Smooth scale spring transition) */}
+      {lightboxVideo && (
+        <div className={`video-lightbox ${isClosing ? '' : 'open'}`} onClick={closeLightbox}>
+          <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
+            <div className="lightbox-close-btn" onClick={closeLightbox}>
+              <CloseIcon />
+            </div>
+            
+            <div className="lightbox-video-container">
+              <video 
+                className="lightbox-video" 
+                autoPlay 
+                loop 
+                playsInline
+                poster={lightboxVideo.photo}
+              >
+                <source src={lightboxVideo.video} type="video/mp4" />
+              </video>
+            </div>
+            
+            <div className="lightbox-info">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <h3 style={{ margin: 0, fontFamily: 'var(--font-display)', fontWeight: '800', fontSize: '24px' }}>{lightboxVideo.name}</h3>
+                <span style={{ fontFamily: 'var(--font-price)', fontSize: '20px', fontWeight: '700', color: 'var(--text-primary)' }}>{lightboxVideo.price}</span>
+              </div>
+              <p style={{ fontFamily: 'var(--font-body)', fontSize: '13.5px', color: 'var(--text-secondary)', margin: '0 0 16px 0', lineHeight: '1.5' }}>
+                {lightboxVideo.description}
+              </p>
+              <div className="drawer-ingredients-box" style={{ margin: 0 }}>
+                <div className="drawer-ingredients-title">Ingredients</div>
+                <div className="drawer-ingredients">{lightboxVideo.ingredients}</div>
+              </div>
+            </div>
           </div>
         </div>
       )}
