@@ -281,13 +281,14 @@ const DISHES_DATA = [
   },
   {
     id: 'palak_paneer',
-    name: 'Palak Paneer',
+    name: 'Hyderabadi Paneer Masala',
     price: '₹290',
     category: 'Mains',
-    ingredients: 'Spinach puree, cottage cheese, garlic, cumin, heavy cream.',
-    description: 'Cubes of cottage cheese simmered in a silky spinach puree scented with golden garlic.',
+    ingredients: 'Paneer slabs, capsicum, onions, roasted spice powder, cream, ghee.',
+    description: 'An authentic, highly flavorful Hyderabadi paneer curry cooked with a special roasted spice paste.',
     photo: 'https://images.unsplash.com/photo-1618219908412-a29a1bb7b86e?w=500&auto=format&fit=crop&q=80',
-    hasVideo: false
+    video: '/videos/kadai_paneer.mp4',
+    hasVideo: true
   },
   {
     id: 'chana_masala',
@@ -311,13 +312,14 @@ const DISHES_DATA = [
   },
   {
     id: 'paneer_butter_masala',
-    name: 'Paneer Butter Masala',
+    name: 'Dhaba Style Paneer Masala',
     price: '₹310',
     category: 'Mains',
-    ingredients: 'Cottage cheese, sweet tomato gravy, rich cream, butter.',
-    description: 'Fresh cottage cheese chunks cooked in a rich, creamy onion-tomato sauce with pure butter.',
+    ingredients: 'Paneer cubes, tomatoes, onions, butter, ginger-garlic paste, cream, kitchen king masala.',
+    description: 'A rich, spiced dhaba-style cottage cheese curry loaded with onions, tomatoes, and aromatic Indian spices.',
     photo: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=500&auto=format&fit=crop&q=80',
-    hasVideo: false
+    video: '/videos/paneer_butter_masala.mp4',
+    hasVideo: true
   },
   {
     id: 'lamb_bhuna',
