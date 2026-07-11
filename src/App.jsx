@@ -976,7 +976,7 @@ function App() {
             />
 
             {/* Dish info overlay at bottom of reel */}
-            {isVideoLoaded && (
+            {isVideoLoaded && !isClosing && (
               <div className="reel-dish-info" onClick={(e) => e.stopPropagation()}>
                 <p className="reel-dish-desc">{lightboxVideo.description}</p>
                 <p className="reel-dish-ingredients">
