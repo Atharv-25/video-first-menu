@@ -686,15 +686,15 @@ body {
   background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Actions Column on the Right side */
+/* Actions Column on the Right side (Like, Share, Save only) */
 .reel-actions-column {
   position: absolute;
-  right: 12px;
-  bottom: 110px;
+  right: 16px;
+  bottom: 40px; /* Center-bottom aligned for clean minimal layout */
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
   z-index: 3;
 }
 
