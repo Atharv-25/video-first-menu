@@ -677,6 +677,30 @@ function App() {
   const [lightboxVideo, setLightboxVideo] = useState(null)
   const [isClosing, setIsClosing] = useState(false)
 
+  // Reels Interaction States
+  const [likedDishes, setLikedDishes] = useState({})
+  const [bookmarkedDishes, setBookmarkedDishes] = useState({})
+  const [showRecipeDetails, setShowRecipeDetails] = useState(false)
+
+  const toggleLike = (dishId) => {
+    setLikedDishes(prev => ({
+      ...prev,
+      [dishId]: !prev[dishId]
+    }))
+  }
+
+  const toggleBookmark = (dishId) => {
+    setBookmarkedDishes(prev => ({
+      ...prev,
+      [dishId]: !prev[dishId]
+    }))
+  }
+
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href)
+    alert('✨ Saffron Reel link copied to clipboard!')
+  }
+
   // Combined Filter logic (Category + Search Query + AI Quick Filter)
   const filteredDishes = DISHES_DATA.filter(dish => {
     // 1. Category Filter
@@ -751,6 +775,7 @@ function App() {
     setIsClosing(true)
     setTimeout(() => {
       setLightboxVideo(null)
+      setShowRecipeDetails(false)
       setIsClosing(false)
     }, 300) // matches index.css transition times
   }
@@ -861,39 +886,178 @@ function App() {
         </div>
       )}
 
-      {/* 6. SPRING VIDEO LIGHTBOX OVERLAY (Smooth scale spring transition) */}
+      {/* 6. INSTA REEL WIDGET OVERLAY */}
       {lightboxVideo && (
-        <div className={`video-lightbox ${isClosing ? '' : 'open'}`} onClick={closeLightbox}>
-          <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
-            <div className="lightbox-close-btn" onClick={closeLightbox}>
-              <CloseIcon />
-            </div>
+        <div className={`video-lightbox ${isClosing ? 'closing' : 'open'}`} onClick={closeLightbox}>
+          <div className="reel-container" onClick={(e) => e.stopPropagation()}>
             
-            <div className="lightbox-video-container">
-              <video 
-                className="lightbox-video" 
-                autoPlay 
-                loop 
-                playsInline
-                poster={lightboxVideo.photo}
+            {/* Reel Video Player */}
+            <video 
+              className="reel-video" 
+              autoPlay 
+              loop 
+              playsInline
+              src={lightboxVideo.video}
+              poster={lightboxVideo.photo}
+            />
+
+            {/* Dark overlay gradient to make text legible */}
+            <div className="reel-dark-gradient" />
+
+            {/* Top Bar Navigation */}
+            <div className="reel-top-bar">
+              <button className="reel-icon-btn back-btn" onClick={closeLightbox}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
+              </button>
+              <span className="reel-top-title">Menu Reels</span>
+              <button className="reel-icon-btn" onClick={() => setIsAiOpen(true)}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12 2c-.13 0-.26 0-.39.01a7.5 7.5 0 0 0-7.92 7.92c-.01.13-.01.26-.01.39 0 5.38 4.36 9.75 9.75 9.75s9.75-4.37 9.75-9.75S17.38 2 12 2Z" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Right Side Actions Column */}
+            <div className="reel-actions-column">
+              {/* Like / Heart Action */}
+              <button 
+                className={`reel-action-btn ${likedDishes[lightboxVideo.id] ? 'liked' : ''}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleLike(lightboxVideo.id);
+                }}
               >
-                <source src={lightboxVideo.video} type="video/mp4" />
-              </video>
-            </div>
-            
-            <div className="lightbox-info">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                <h3 style={{ margin: 0, fontFamily: 'var(--font-display)', fontWeight: '800', fontSize: '24px' }}>{lightboxVideo.name}</h3>
-                <span style={{ fontFamily: 'var(--font-price)', fontSize: '20px', fontWeight: '700', color: 'var(--text-primary)' }}>{lightboxVideo.price}</span>
+                <div className="action-icon-circle">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill={likedDishes[lightboxVideo.id] ? '#ff3040' : 'none'} stroke={likedDishes[lightboxVideo.id] ? '#ff3040' : 'currentColor'} strokeWidth="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                  </svg>
+                </div>
+                <span className="action-label">{likedDishes[lightboxVideo.id] ? '2.5k' : '2.4k'}</span>
+              </button>
+
+              {/* View Ingredients / Comments Drawer */}
+              <button 
+                className="reel-action-btn" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowRecipeDetails(!showRecipeDetails);
+                }}
+              >
+                <div className="action-icon-circle">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                  </svg>
+                </div>
+                <span className="action-label">128</span>
+              </button>
+
+              {/* Share Action */}
+              <button 
+                className="reel-action-btn" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleShare();
+                }}
+              >
+                <div className="action-icon-circle">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <line x1="22" y1="2" x2="11" y2="13" />
+                    <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                  </svg>
+                </div>
+                <span className="action-label">Share</span>
+              </button>
+
+              {/* Bookmark Save Action */}
+              <button 
+                className={`reel-action-btn ${bookmarkedDishes[lightboxVideo.id] ? 'active' : ''}`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleBookmark(lightboxVideo.id);
+                }}
+              >
+                <div className="action-icon-circle">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill={bookmarkedDishes[lightboxVideo.id] ? '#ffc107' : 'none'} stroke={bookmarkedDishes[lightboxVideo.id] ? '#ffc107' : 'currentColor'} strokeWidth="2">
+                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+                  </svg>
+                </div>
+                <span className="action-label">Save</span>
+              </button>
+
+              {/* Rotating Audio Disc */}
+              <div className="audio-disc-container">
+                <div className="audio-disc">
+                  <img src={lightboxVideo.photo} alt="audio disc" className="audio-disc-img" />
+                </div>
               </div>
-              <p style={{ fontFamily: 'var(--font-body)', fontSize: '13.5px', color: 'var(--text-secondary)', margin: '0 0 16px 0', lineHeight: '1.5' }}>
+            </div>
+
+            {/* Bottom Info Details Section */}
+            <div className="reel-info-panel">
+              {/* Creator details */}
+              <div className="creator-row">
+                <div className="creator-avatar">
+                  <img src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=100&auto=format&fit=crop&q=80" alt="Chef Avatar" />
+                </div>
+                <span className="creator-name">saffron.chef</span>
+                <span className="creator-badge">Verified</span>
+                <button className="follow-btn" onClick={(e) => e.stopPropagation()}>Follow</button>
+              </div>
+
+              {/* Dish Name & Price */}
+              <div className="dish-title-row">
+                <h3 className="dish-name">{lightboxVideo.name}</h3>
+                <span className="dish-price">{lightboxVideo.price}</span>
+              </div>
+
+              {/* Dish Short Description */}
+              <p className="dish-description-preview">
                 {lightboxVideo.description}
               </p>
-              <div className="drawer-ingredients-box" style={{ margin: 0 }}>
-                <div className="drawer-ingredients-title">Ingredients</div>
-                <div className="drawer-ingredients">{lightboxVideo.ingredients}</div>
+
+              {/* Music Marquee Text */}
+              <div className="music-marquee">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: '6px', flexShrink: 0 }}>
+                  <path d="M9 18V5l12-2v13" />
+                  <circle cx="6" cy="18" r="3" />
+                  <circle cx="18" cy="16" r="3" />
+                </svg>
+                <div className="marquee-content-box">
+                  <span className="marquee-text">
+                    Saffron & Spice Original Audio • Chef's Signature Mix • Saffron & Spice Original Audio • Chef's Signature Mix
+                  </span>
+                </div>
               </div>
             </div>
+
+            {/* Swipeable / Slide-up Details Drawer */}
+            <div className={`reel-details-drawer ${showRecipeDetails ? 'open' : ''}`}>
+              <div className="drawer-handle-bar" onClick={(e) => { e.stopPropagation(); setShowRecipeDetails(false); }} />
+              <div className="drawer-scroll-content">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                  <h4 style={{ margin: 0, fontSize: '20px', fontFamily: 'var(--font-display)', color: '#fff' }}>Ingredients & Recipe</h4>
+                  <span style={{ fontSize: '18px', color: '#1a73e8', fontWeight: '700' }}>{lightboxVideo.price}</span>
+                </div>
+                <div className="drawer-ingredients-box" style={{ margin: '0 0 20px 0' }}>
+                  <div className="drawer-ingredients-title">Ingredients List</div>
+                  <div className="drawer-ingredients" style={{ fontSize: '14px', lineHeight: '1.6', color: '#e3e3e3' }}>
+                    {lightboxVideo.ingredients}
+                  </div>
+                </div>
+                <div className="drawer-ingredients-box">
+                  <div className="drawer-ingredients-title">Preparation Steps</div>
+                  <div className="drawer-ingredients" style={{ fontSize: '14.5px', lineHeight: '1.6', color: '#e3e3e3' }}>
+                    1. Chef's selection of fresh seasonal produce and spices.<br/>
+                    2. Sautéed with authentic ground spices on a slow copper flame.<br/>
+                    3. Garnished with freshly churned butter and organic microgreens.<br/>
+                    4. Served hot with tandoori clay oven breads.
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       )}

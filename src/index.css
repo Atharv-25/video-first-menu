@@ -567,18 +567,18 @@ body {
   background: #E5E5E5;
 }
 
-/* 6. VERTICAL VIDEO LIGHTBOX WITH TRANSITIONS */
+/* 6. INSTAGRAM REELS LIGHTBOX POP PLAYER */
 .video-lightbox {
   position: fixed;
   inset: 0;
   z-index: 2000;
-  background: rgba(0, 0, 0, 0.94);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(0, 0, 0, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16px;
+  padding: 0; /* Cover the whole screen */
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -589,70 +589,350 @@ body {
   pointer-events: auto;
 }
 
-.lightbox-content {
+.reel-container {
   width: 100%;
-  max-width: 440px;
-  border-radius: 28px;
-  overflow: hidden;
-  background: var(--bg-dark);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 12px 60px rgba(0, 0, 0, 0.95);
+  max-width: 420px;
+  height: 100%;
+  max-height: calc(100vh - 40px);
   position: relative;
-  transform: scale(0.9) translateY(40px);
+  background-color: #000;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.95);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  /* Premium spring pop animation scale from screen center */
+  transform: scale(0.8);
   opacity: 0;
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
 }
 
-.video-lightbox.open .lightbox-content {
-  transform: scale(1) translateY(0);
+@media (max-width: 480px) {
+  .reel-container {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 0;
+    height: 100vh;
+  }
+}
+
+.video-lightbox.open .reel-container {
+  transform: scale(1);
   opacity: 1;
 }
 
-.video-lightbox.closing .lightbox-content {
-  transform: scale(0.92) translateY(30px);
+.video-lightbox.closing .reel-container {
+  transform: scale(0.82);
   opacity: 0;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
 }
 
-.lightbox-video-container {
+.reel-video {
+  position: absolute;
+  inset: 0;
   width: 100%;
-  aspect-ratio: 9/16;
-  max-height: 65vh;
-  position: relative;
-  background: #000;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
 }
 
-.lightbox-video {
+.reel-dark-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.25) 50%, rgba(0, 0, 0, 0.5) 100%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Top bar overlay */
+.reel-top-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  z-index: 3;
+  color: #fff;
+}
+
+.reel-top-title {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 750;
+  letter-spacing: 0.05em;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.reel-icon-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  padding: 8px;
+  cursor: pointer;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.reel-icon-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Actions Column on the Right side */
+.reel-actions-column {
+  position: absolute;
+  right: 12px;
+  bottom: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  z-index: 3;
+}
+
+.reel-action-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  outline: none;
+}
+
+.action-icon-circle {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
+}
+
+.reel-action-btn:hover .action-icon-circle {
+  background-color: rgba(0, 0, 0, 0.7);
+  transform: scale(1.08);
+}
+
+.reel-action-btn.liked .action-icon-circle {
+  background-color: rgba(255, 48, 64, 0.15);
+  border-color: rgba(255, 48, 64, 0.3);
+}
+
+.action-label {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+/* Rotating music disc */
+.audio-disc-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.audio-disc {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #111;
+  border: 2px solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: spin 5s linear infinite;
+  overflow: hidden;
+}
+
+.audio-disc-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.lightbox-info {
-  padding: 20px;
-  background: linear-gradient(to top, var(--bg-dark) 0%, rgba(0, 0, 0, 0.8) 100%);
-}
-
-.lightbox-close-btn {
+/* Info Panel on the Bottom Left */
+.reel-info-panel {
   position: absolute;
-  top: 16px;
-  right: 16px;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  left: 0;
+  right: 76px; /* Avoid overlapping the right actions bar */
+  bottom: 0;
+  padding: 16px;
+  z-index: 3;
   color: #fff;
   display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.creator-row {
+  display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 8px;
+}
+
+.creator-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1.5px solid #fff;
+}
+
+.creator-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.creator-name {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 750;
+}
+
+.creator-badge {
+  font-family: var(--font-body);
+  font-size: 9px;
+  font-weight: 700;
+  background-color: #1a73e8;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.follow-btn {
+  background: transparent;
+  border: 1px solid #fff;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
   cursor: pointer;
-  z-index: 10;
+  margin-left: 4px;
   transition: all 0.2s ease;
 }
 
-.lightbox-close-btn:hover {
-  background: #fff;
-  color: #000;
+.follow-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dish-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.dish-name {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 800;
+  margin: 0;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+.dish-price {
+  font-family: var(--font-price);
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+.dish-description-preview {
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+/* Audio marquee bar */
+.music-marquee {
+  display: flex;
+  align-items: center;
+  margin-top: 4px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.marquee-content-box {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+@keyframes marquee {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+
+.marquee-text {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+  animation: marquee 16s linear infinite;
+  padding-left: 100%;
+}
+
+/* Recipe Drawer overlay */
+.reel-details-drawer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 60%;
+  background: rgba(13, 22, 36, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 24px 24px 0 0;
+  z-index: 4;
+  transform: translateY(100%);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.reel-details-drawer.open {
+  transform: translateY(0);
+}
+
+.drawer-handle-bar {
+  width: 40px;
+  height: 5px;
+  border-radius: 3px;
+  background-color: rgba(255, 255, 255, 0.3);
+  margin: 12px auto;
+  cursor: pointer;
+}
+
+.drawer-scroll-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 20px 24px 20px;
 }
 
