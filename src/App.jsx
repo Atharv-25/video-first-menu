@@ -811,26 +811,29 @@ function App() {
         </div>
       </div>
 
-      {/* 2. CIRCULAR CATEGORY SCROLLER ROW */}
-      <section className="category-scroller-box">
-        <div className="category-flex-row scrollbar-hide">
-          {CATEGORIES_DATA.map((cat) => (
-            <button
-              key={cat.id}
-              className={`category-circle-item ${activeCategory === cat.id ? 'active' : ''}`}
-              onClick={() => {
-                setActiveCategory(cat.id)
-                setActiveDish(null)
-              }}
-            >
-              <div className="category-circle">
-                {cat.icon}
-              </div>
-              <span className="category-label">{cat.name}</span>
-            </button>
-          ))}
+      {/* 2. GOOGLE STYLE CATEGORY WIDGET BAR */}
+      <div className="google-category-container">
+        <div className="google-category-bar">
+          <div className="google-category-scroller scrollbar-hide">
+            {CATEGORIES_DATA.map((cat) => {
+              const isActive = activeCategory === cat.id
+              return (
+                <button
+                  key={cat.id}
+                  className={`google-category-btn ${isActive ? 'active' : ''}`}
+                  onClick={() => {
+                    setActiveCategory(cat.id)
+                    setActiveDish(null)
+                  }}
+                >
+                  <span className="google-category-icon">{cat.icon}</span>
+                  {isActive && <span className="google-category-text">{cat.name}</span>}
+                </button>
+              )
+            })}
+          </div>
         </div>
-      </section>
+      </div>
 
       {/* 3. CATEGORY TITLE HEADER */}
       <div className="category-section-header">
