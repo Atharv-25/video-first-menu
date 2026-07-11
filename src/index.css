@@ -570,42 +570,45 @@ body {
   background: #E5E5E5;
 }
 
-/* 6. INSTAGRAM REELS LIGHTBOX POP PLAYER */
+/* 6. INSTAGRAM REELS HERO TRANSITION PLAYER */
 .video-lightbox {
   position: fixed;
   inset: 0;
   z-index: 2000;
-  background: rgba(0, 0, 0, 0.92);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0; /* Cover the whole screen */
-  opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .video-lightbox.open {
-  opacity: 1;
   pointer-events: auto;
+}
+
+/* Dark backdrop as a separate layer so it doesn't affect reel-container opacity */
+.video-lightbox::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.video-lightbox.open::before {
+  opacity: 1;
+}
+
+.video-lightbox.closing::before {
+  opacity: 0;
+  transition: opacity 0.4s ease;
 }
 
 .reel-container {
   background-color: #000;
   overflow: hidden;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.95);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
   cursor: pointer;
-}
-
-.video-lightbox.closing {
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1; /* Above the ::before backdrop */
 }
 
 .reel-video {

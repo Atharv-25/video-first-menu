@@ -773,16 +773,18 @@ function App() {
     setAiMessages(prev => [...prev, userMsg, { role: 'assistant', text: responseText }])
   }
 
-  // Handles smooth popup close transition with Zoom Back Hero animation
+  // Handles smooth Hero zoom-back close transition
   const closeLightbox = () => {
     setIsClosing(true)
+    // Container morphs back to card position (0.45s), then backdrop fades out (0.4s)
+    // Total animation time ~500ms before cleanup
     setTimeout(() => {
       setLightboxVideo(null)
       setShowRecipeDetails(false)
       setIsVideoLoaded(false)
       setIsClosing(false)
       setClickedCardRect(null)
-    }, 450) // Wait for transition animation to finish (450ms)
+    }, 500)
   }
 
   const handleCardClick = (dish, e) => {
