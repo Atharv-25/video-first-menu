@@ -770,46 +770,7 @@ function App() {
         <span className="minimal-header-title">FirstFrame</span>
       </header>
 
-      {/* NEW: GOOGLE STYLE PILL SEARCH BAR */}
-      <div className="google-bar-container">
-        <div className="google-search-bar">
-          <button className="google-bar-btn plus-btn" title="Add filters">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="12" y1="5" x2="12" y2="19" />
-              <line x1="5" y1="12" x2="19" y2="12" />
-            </svg>
-          </button>
-          
-          <input 
-            type="text" 
-            className="google-bar-input" 
-            placeholder="Search Saffron & Spice..." 
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          
-          <button className="google-bar-btn mic-btn" title="Voice Search">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
-              <path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3M8 22h8" />
-            </svg>
-          </button>
-          
-          <button className="google-bar-btn camera-btn" title="Scan visual menu">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-              <circle cx="12" cy="13" r="4" />
-            </svg>
-          </button>
-          
-          <button className="google-bar-ai-btn" onClick={() => setIsAiOpen(true)}>
-            <svg className="sparkle-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 3c.13 0 .26 0 .39.01a7.5 7.5 0 0 0 7.92 7.92c.01.13.01.26.01.39 0 5.38-4.36 9.75-9.75 9.75S.5 16.71.5 11.32.5 3 12 3Z" />
-            </svg>
-            <span>AI Mode</span>
-          </button>
-        </div>
-      </div>
+
 
       {/* 2. GOOGLE STYLE CATEGORY WIDGET BAR */}
       <div className="google-category-container">
