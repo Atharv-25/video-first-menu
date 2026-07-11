@@ -1,6 +1,15 @@
 import { useState, useEffect, useRef } from 'react'
 
 // Premium Custom Indian SVG Icon components
+const AllIcon = () => (
+  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="3" width="7" height="7" />
+    <rect x="14" y="3" width="7" height="7" />
+    <rect x="3" y="14" width="7" height="7" />
+    <rect x="14" y="14" width="7" height="7" />
+  </svg>
+)
+
 const StartersIcon = () => (
   <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     {/* Triangular samosa outline */}
@@ -595,6 +604,7 @@ const DISHES_DATA = [
 
 // 6 Menu Categories
 const CATEGORIES_DATA = [
+  { id: 'All', name: 'All', icon: <AllIcon /> },
   { id: 'Starters', name: 'Starters', icon: <StartersIcon /> },
   { id: 'Mains', name: 'Mains', icon: <MainsIcon /> },
   { id: 'Breads', name: 'Breads', icon: <BreadsIcon /> },
@@ -652,15 +662,17 @@ function DishCardMedia({ dish }) {
 }
 
 function App() {
-  const [activeCategory, setActiveCategory] = useState('Starters')
+  const [activeCategory, setActiveCategory] = useState('All')
   const [activeDish, setActiveDish] = useState(null)
   
   // States for spring video lightbox
   const [lightboxVideo, setLightboxVideo] = useState(null)
   const [isClosing, setIsClosing] = useState(false)
 
-  // Filter dishes by active category
-  const filteredDishes = DISHES_DATA.filter(dish => dish.category === activeCategory)
+  // Filter dishes by active category (If 'All' is active, show only video-enabled dishes)
+  const filteredDishes = activeCategory === 'All'
+    ? DISHES_DATA.filter(dish => dish.hasVideo)
+    : DISHES_DATA.filter(dish => dish.category === activeCategory)
 
   // Handles smooth popup close transition
   const closeLightbox = () => {
