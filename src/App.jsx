@@ -676,6 +676,7 @@ function App() {
   // States for spring video lightbox
   const [lightboxVideo, setLightboxVideo] = useState(null)
   const [isClosing, setIsClosing] = useState(false)
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false)
 
   // Reels Interaction States
   const [likedDishes, setLikedDishes] = useState({})
@@ -802,12 +803,14 @@ function App() {
     setTimeout(() => {
       setLightboxVideo(null)
       setShowRecipeDetails(false)
+      setIsVideoLoaded(false)
       setIsClosing(false)
     }, 300) // matches index.css transition times
   }
 
   const handleCardClick = (dish) => {
     if (dish.hasVideo) {
+      setIsVideoLoaded(false)
       setLightboxVideo(dish)
     } else {
       setActiveDish(dish)
@@ -923,15 +926,28 @@ function App() {
         >
           <div className="reel-container" onClick={(e) => e.stopPropagation()}>
             
-            {/* Reel Video Player */}
+            {/* Seamless custom loader spinner (Fades out when video plays) */}
+            {!isVideoLoaded && (
+              <div className="reel-loader">
+                <div className="reel-spinner" />
+                <span className="reel-loader-text">Loading Loop...</span>
+              </div>
+            )}
+
+            {/* Reel Video Player (Muted autoplay to guarantee mobile autoplay approval, keyed, and fades in smoothly) */}
             <video 
               key={lightboxVideo.id}
               className="reel-video" 
               autoPlay 
               loop 
+              muted
               playsInline
               src={lightboxVideo.video}
-              poster={lightboxVideo.photo}
+              onPlaying={() => setIsVideoLoaded(true)}
+              style={{
+                opacity: isVideoLoaded ? 1 : 0,
+                transition: 'opacity 0.4s ease'
+              }}
             />
 
           </div>
