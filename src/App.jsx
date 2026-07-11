@@ -978,13 +978,11 @@ function App() {
             {/* Dish info overlay at bottom of reel */}
             {isVideoLoaded && (
               <div className="reel-dish-info" onClick={(e) => e.stopPropagation()}>
-                <h3 className="reel-dish-name">{lightboxVideo.name}</h3>
                 <p className="reel-dish-desc">{lightboxVideo.description}</p>
                 <p className="reel-dish-ingredients">
                   <span className="reel-ingredients-label">🧂 </span>
                   {lightboxVideo.ingredients}
                 </p>
-                <span className="reel-dish-price">{lightboxVideo.price}</span>
               </div>
             )}
 
