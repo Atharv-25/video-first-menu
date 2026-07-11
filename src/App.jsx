@@ -677,6 +677,8 @@ function App() {
   const [lightboxVideo, setLightboxVideo] = useState(null)
   const [isClosing, setIsClosing] = useState(false)
   const [isVideoLoaded, setIsVideoLoaded] = useState(false)
+  const [clickedCardRect, setClickedCardRect] = useState(null)
+  const [isHeroAnimating, setIsHeroAnimating] = useState(false)
 
   // Reels Interaction States
   const [likedDishes, setLikedDishes] = useState({})
@@ -771,33 +773,7 @@ function App() {
     setAiMessages(prev => [...prev, userMsg, { role: 'assistant', text: responseText }])
   }
 
-  // Swipe-to-dismiss and scroll-to-dismiss hooks for Reel player
-  const touchStartY = useRef(0)
-
-  const handleTouchStart = (e) => {
-    touchStartY.current = e.touches[0].clientY
-  }
-
-  const handleTouchMove = (e) => {
-    if (!touchStartY.current) return
-    const currentY = e.touches[0].clientY
-    const diffY = touchStartY.current - currentY
-    
-    // Swipe-to-dismiss threshold (50px vertical swipe up or down)
-    if (Math.abs(diffY) > 50) {
-      closeLightbox()
-      touchStartY.current = 0 // prevent duplicate trigger
-    }
-  }
-
-  const handleWheel = (e) => {
-    // Wheel scroll-to-dismiss (deltaY represents scroll direction)
-    if (Math.abs(e.deltaY) > 10) {
-      closeLightbox()
-    }
-  }
-
-  // Handles smooth popup close transition
+  // Handles smooth popup close transition with Zoom Back Hero animation
   const closeLightbox = () => {
     setIsClosing(true)
     setTimeout(() => {
@@ -805,15 +781,63 @@ function App() {
       setShowRecipeDetails(false)
       setIsVideoLoaded(false)
       setIsClosing(false)
-    }, 300) // matches index.css transition times
+      setClickedCardRect(null)
+    }, 450) // Wait for transition animation to finish (450ms)
   }
 
-  const handleCardClick = (dish) => {
+  const handleCardClick = (dish, e) => {
     if (dish.hasVideo) {
       setIsVideoLoaded(false)
+      
+      // Get the bounding box of the media container in viewport coordinates
+      const cardElement = e.currentTarget.querySelector('.dish-grid-media-box') || e.currentTarget
+      const rect = cardElement.getBoundingClientRect()
+      
+      setClickedCardRect(rect)
       setLightboxVideo(dish)
+      setIsHeroAnimating(true)
+      
+      // Let React paint the initial position, then trigger expansion in the next frame
+      setTimeout(() => {
+        setIsHeroAnimating(false)
+      }, 30)
     } else {
       setActiveDish(dish)
+    }
+  }
+
+  // Calculate dynamic inline styles for the shared element (Hero) transition
+  const getHeroStyle = () => {
+    if (!clickedCardRect) return {}
+    
+    // Zoom morph back to card position or initial frame
+    if (isHeroAnimating || isClosing) {
+      return {
+        position: 'fixed',
+        top: `${clickedCardRect.top}px`,
+        left: `${clickedCardRect.left}px`,
+        width: `${clickedCardRect.width}px`,
+        height: `${clickedCardRect.height}px`,
+        borderRadius: '22px',
+        boxShadow: 'none',
+        transition: 'all 0.45s cubic-bezier(0.34, 1.56, 0.64, 1)'
+      }
+    }
+    
+    // Centered overlay sizing (80% viewport size capped at max dimensions)
+    const targetWidth = Math.min(window.innerWidth * 0.8, 400)
+    const targetHeight = Math.min(window.innerHeight * 0.8, 700)
+    const targetTop = (window.innerHeight - targetHeight) / 2
+    const targetLeft = (window.innerWidth - targetWidth) / 2
+    
+    return {
+      position: 'fixed',
+      top: `${targetTop}px`,
+      left: `${targetLeft}px`,
+      width: `${targetWidth}px`,
+      height: `${targetHeight}px`,
+      borderRadius: '20px',
+      transition: 'all 0.45s cubic-bezier(0.34, 1.56, 0.64, 1)'
     }
   }
 
@@ -864,7 +888,7 @@ function App() {
           <div 
             key={dish.id} 
             className="dish-grid-card glass glass-interactive"
-            onClick={() => handleCardClick(dish)}
+            onClick={(e) => handleCardClick(dish, e)}
           >
             <div className="dish-grid-media-box">
               <DishCardMedia dish={dish} />
@@ -915,16 +939,17 @@ function App() {
         </div>
       )}
 
-      {/* 6. INSTA REEL WIDGET OVERLAY (Empty, clean video player screen with swipe/scroll-to-close) */}
+      {/* 6. INSTA REEL WIDGET OVERLAY (Empty, clean video player screen with shared element transition) */}
       {lightboxVideo && (
         <div 
           className={`video-lightbox ${isClosing ? 'closing' : 'open'}`} 
           onClick={closeLightbox}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onWheel={handleWheel}
         >
-          <div className="reel-container" onClick={(e) => e.stopPropagation()}>
+          <div 
+            className="reel-container" 
+            onClick={closeLightbox}
+            style={getHeroStyle()}
+          >
             
             {/* Seamless custom loader spinner (Fades out when video plays) */}
             {!isVideoLoaded && (
@@ -934,7 +959,7 @@ function App() {
               </div>
             )}
 
-            {/* Reel Video Player (Muted autoplay to guarantee mobile autoplay approval, keyed, and fades in smoothly) */}
+            {/* Reel Video Player (Muted autoplay, keyed, and fades in smoothly) */}
             <video 
               key={lightboxVideo.id}
               className="reel-video" 
