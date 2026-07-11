@@ -925,6 +925,7 @@ function App() {
             
             {/* Reel Video Player */}
             <video 
+              key={lightboxVideo.id}
               className="reel-video" 
               autoPlay 
               loop 
