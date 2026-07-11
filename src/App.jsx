@@ -665,14 +665,86 @@ function App() {
   const [activeCategory, setActiveCategory] = useState('All')
   const [activeDish, setActiveDish] = useState(null)
   
+  // Search and AI Assistant States
+  const [searchQuery, setSearchQuery] = useState('')
+  const [isAiOpen, setIsAiOpen] = useState(false)
+  const [aiFilter, setAiFilter] = useState(null)
+  const [aiMessages, setAiMessages] = useState([
+    { role: 'assistant', text: 'Namaste! I am your Saffron AI Assistant. Tap a quick option below or search dishes above to explore the menu!' }
+  ])
+
   // States for spring video lightbox
   const [lightboxVideo, setLightboxVideo] = useState(null)
   const [isClosing, setIsClosing] = useState(false)
 
-  // Filter dishes by active category (If 'All' is active, show only video-enabled dishes)
-  const filteredDishes = activeCategory === 'All'
-    ? DISHES_DATA.filter(dish => dish.hasVideo)
-    : DISHES_DATA.filter(dish => dish.category === activeCategory)
+  // Combined Filter logic (Category + Search Query + AI Quick Filter)
+  const filteredDishes = DISHES_DATA.filter(dish => {
+    // 1. Category Filter
+    if (activeCategory === 'All') {
+      if (!dish.hasVideo) return false
+    } else {
+      if (dish.category !== activeCategory) return false
+    }
+    
+    // 2. Search Query Filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase()
+      const matchName = dish.name.toLowerCase().includes(query)
+      const matchDesc = dish.description.toLowerCase().includes(query)
+      const matchIng = dish.ingredients.toLowerCase().includes(query)
+      if (!matchName && !matchDesc && !matchIng) return false
+    }
+    
+    // 3. AI Quick Filter
+    if (aiFilter) {
+      const descLower = dish.description.toLowerCase()
+      const nameLower = dish.name.toLowerCase()
+      const ingLower = dish.ingredients.toLowerCase()
+      
+      if (aiFilter === 'spicy') {
+        const isSpicy = descLower.includes('spicy') || descLower.includes('chili') || descLower.includes('chilli') || nameLower.includes('chilli') || nameLower.includes('chili') || descLower.includes('fiery')
+        if (!isSpicy) return false
+      }
+      if (aiFilter === 'protein') {
+        const isHighProtein = descLower.includes('protein') || ingLower.includes('paneer') || ingLower.includes('chicken') || ingLower.includes('soya') || nameLower.includes('paneer') || nameLower.includes('chicken') || nameLower.includes('soya')
+        if (!isHighProtein) return false
+      }
+      if (aiFilter === 'healthy') {
+        const isHealthy = descLower.includes('healthy') || descLower.includes('low calorie') || descLower.includes('low-calorie') || descLower.includes('refreshing') || nameLower.includes('achar') || nameLower.includes('raita')
+        if (!isHealthy) return false
+      }
+      if (aiFilter === 'specials') {
+        const isSpecial = descLower.includes('traditional') || descLower.includes('authentic') || descLower.includes('signature') || descLower.includes('special') || nameLower.includes('special') || nameLower.includes('kumaoni')
+        if (!isSpecial) return false
+      }
+    }
+    
+    return true
+  })
+
+  const handleAiPrompt = (promptType, promptLabel) => {
+    const userMsg = { role: 'user', text: promptLabel }
+    let responseText = ''
+    
+    if (promptType === 'spicy') {
+      responseText = '🌶️ Spicy flavor profile unlocked! I have highlighted our spiciest dishes like the Korean Paneer Sticks and Dhaba Style Paneer Masala.'
+      setAiFilter('spicy')
+    } else if (promptType === 'protein') {
+      responseText = '💪 High protein power-ups! Showing protein-rich items containing paneer, chicken, or soya chunks.'
+      setAiFilter('protein')
+    } else if (promptType === 'healthy') {
+      responseText = '🥗 Keeping it light! Showing clean, refreshing, and low-calorie dishes like Nepali Cucumber Achar and Pahadi Raita.'
+      setAiFilter('healthy')
+    } else if (promptType === 'specials') {
+      responseText = '✨ Chef\'s recommendation! Highlighting our signature specials, including Champaran Chicken Curry and traditional Matka Kulfi.'
+      setAiFilter('specials')
+    } else if (promptType === 'reset') {
+      responseText = 'All AI filters cleared. You can search or select a new prompt suggestion!'
+      setAiFilter(null)
+    }
+    
+    setAiMessages(prev => [...prev, userMsg, { role: 'assistant', text: responseText }])
+  }
 
   // Handles smooth popup close transition
   const closeLightbox = () => {
@@ -697,6 +769,47 @@ function App() {
       <header className="minimal-header">
         <span className="minimal-header-title">FirstFrame</span>
       </header>
+
+      {/* NEW: GOOGLE STYLE PILL SEARCH BAR */}
+      <div className="google-bar-container">
+        <div className="google-search-bar">
+          <button className="google-bar-btn plus-btn" title="Add filters">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+          </button>
+          
+          <input 
+            type="text" 
+            className="google-bar-input" 
+            placeholder="Search Saffron & Spice..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          
+          <button className="google-bar-btn mic-btn" title="Voice Search">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3M8 22h8" />
+            </svg>
+          </button>
+          
+          <button className="google-bar-btn camera-btn" title="Scan visual menu">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+              <circle cx="12" cy="13" r="4" />
+            </svg>
+          </button>
+          
+          <button className="google-bar-ai-btn" onClick={() => setIsAiOpen(true)}>
+            <svg className="sparkle-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 3c.13 0 .26 0 .39.01a7.5 7.5 0 0 0 7.92 7.92c.01.13.01.26.01.39 0 5.38-4.36 9.75-9.75 9.75S.5 16.71.5 11.32.5 3 12 3Z" />
+            </svg>
+            <span>AI Mode</span>
+          </button>
+        </div>
+      </div>
 
       {/* 2. CIRCULAR CATEGORY SCROLLER ROW */}
       <section className="category-scroller-box">
@@ -816,6 +929,62 @@ function App() {
                 <div className="drawer-ingredients-title">Ingredients</div>
                 <div className="drawer-ingredients">{lightboxVideo.ingredients}</div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* 7. SAFFRON AI CHEF ASSISTANT DRAW SHEET */}
+      {isAiOpen && (
+        <div className="ai-modal-backdrop" onClick={() => setIsAiOpen(false)}>
+          <div className="ai-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="ai-header">
+              <div className="ai-title">
+                <svg className="sparkle-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2c-.13 0-.26 0-.39.01a7.5 7.5 0 0 0-7.92 7.92c-.01.13-.01.26-.01.39 0 5.38 4.36 9.75 9.75 9.75s9.75-4.37 9.75-9.75S17.38 2 12 2Z" />
+                </svg>
+                <span>Saffron AI Assistant</span>
+              </div>
+              <button className="ai-close-btn" onClick={() => setIsAiOpen(false)}>
+                <CloseIcon />
+              </button>
+            </div>
+            
+            <div className="ai-chat-area">
+              {aiMessages.map((msg, index) => (
+                <div key={index} className={`ai-message ${msg.role}`}>
+                  {msg.text}
+                </div>
+              ))}
+            </div>
+
+            <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '12px' }}>
+              <div style={{ fontFamily: 'var(--font-body)', fontSize: '11px', fontWeight: '700', color: 'rgba(255, 255, 255, 0.4)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '8px' }}>
+                Ask Saffron AI Chef:
+              </div>
+              <div className="ai-prompts-grid">
+                <button className="ai-prompt-btn" onClick={() => handleAiPrompt('spicy', '🌶️ Show Spiciest Dishes')}>
+                  🌶️ Spiciest Dishes
+                </button>
+                <button className="ai-prompt-btn" onClick={() => handleAiPrompt('protein', '💪 High Protein Options')}>
+                  💪 High Protein
+                </button>
+                <button className="ai-prompt-btn" onClick={() => handleAiPrompt('healthy', '🥗 Low Calorie / Healthy')}>
+                  🥗 Low Cal / Healthy
+                </button>
+                <button className="ai-prompt-btn" onClick={() => handleAiPrompt('specials', '✨ Chef\'s Signature Dishes')}>
+                  ✨ Chef's Specials
+                </button>
+              </div>
+              
+              {aiFilter && (
+                <button 
+                  className="drawer-close-btn" 
+                  style={{ marginTop: '12px', background: 'rgba(219, 68, 85, 0.15)', color: '#ff4d6d', borderColor: 'rgba(219, 68, 85, 0.3)' }}
+                  onClick={() => handleAiPrompt('reset', '❌ Clear Filters')}
+                >
+                  Clear AI Filters
+                </button>
+              )}
             </div>
           </div>
         </div>
