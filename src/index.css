@@ -591,10 +591,10 @@ body {
 }
 
 .reel-container {
-  width: 60%;
-  height: 60%;
-  max-width: 340px;
-  max-height: 600px;
+  width: 80%;
+  height: 80%;
+  max-width: 400px;
+  max-height: 700px;
   position: relative;
   background-color: #000;
   border-radius: 20px;
@@ -611,8 +611,8 @@ body {
 
 @media (max-width: 480px) {
   .reel-container {
-    width: 60vw; /* Leaves 20% space on left/right */
-    height: 60vh; /* Leaves 20% space on top/bottom */
+    width: 80vw; /* Leaves 10% space on left/right */
+    height: 80vh; /* Leaves 10% space on top/bottom */
     border-radius: 20px;
   }
 }
