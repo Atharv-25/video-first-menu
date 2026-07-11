@@ -770,6 +770,32 @@ function App() {
     setAiMessages(prev => [...prev, userMsg, { role: 'assistant', text: responseText }])
   }
 
+  // Swipe-to-dismiss and scroll-to-dismiss hooks for Reel player
+  const touchStartY = useRef(0)
+
+  const handleTouchStart = (e) => {
+    touchStartY.current = e.touches[0].clientY
+  }
+
+  const handleTouchMove = (e) => {
+    if (!touchStartY.current) return
+    const currentY = e.touches[0].clientY
+    const diffY = touchStartY.current - currentY
+    
+    // Swipe-to-dismiss threshold (50px vertical swipe up or down)
+    if (Math.abs(diffY) > 50) {
+      closeLightbox()
+      touchStartY.current = 0 // prevent duplicate trigger
+    }
+  }
+
+  const handleWheel = (e) => {
+    // Wheel scroll-to-dismiss (deltaY represents scroll direction)
+    if (Math.abs(e.deltaY) > 10) {
+      closeLightbox()
+    }
+  }
+
   // Handles smooth popup close transition
   const closeLightbox = () => {
     setIsClosing(true)
@@ -886,10 +912,16 @@ function App() {
         </div>
       )}
 
-      {/* 6. INSTA REEL WIDGET OVERLAY (Empty, clean video player screen) */}
+      {/* 6. INSTA REEL WIDGET OVERLAY (Empty, clean video player screen with swipe/scroll-to-close) */}
       {lightboxVideo && (
-        <div className={`video-lightbox ${isClosing ? 'closing' : 'open'}`} onClick={closeLightbox}>
-          <div className="reel-container" onClick={closeLightbox}>
+        <div 
+          className={`video-lightbox ${isClosing ? 'closing' : 'open'}`} 
+          onClick={closeLightbox}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onWheel={handleWheel}
+        >
+          <div className="reel-container" onClick={(e) => e.stopPropagation()}>
             
             {/* Reel Video Player */}
             <video 
