@@ -931,6 +931,7 @@ function App() {
               loop 
               playsInline
               src={lightboxVideo.video}
+              poster={lightboxVideo.photo}
             />
 
           </div>
