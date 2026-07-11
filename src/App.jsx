@@ -906,8 +906,6 @@ function App() {
 
             <div className="dish-grid-info">
               <h3 className="dish-grid-name">{dish.name}</h3>
-              <p className="dish-grid-desc">{dish.description}</p>
-              
               <div className="dish-grid-price-row">
                 <span className="dish-grid-price">{dish.price}</span>
               </div>
@@ -976,6 +974,19 @@ function App() {
                 transition: 'opacity 0.4s ease'
               }}
             />
+
+            {/* Dish info overlay at bottom of reel */}
+            {isVideoLoaded && (
+              <div className="reel-dish-info" onClick={(e) => e.stopPropagation()}>
+                <h3 className="reel-dish-name">{lightboxVideo.name}</h3>
+                <p className="reel-dish-desc">{lightboxVideo.description}</p>
+                <p className="reel-dish-ingredients">
+                  <span className="reel-ingredients-label">🧂 </span>
+                  {lightboxVideo.ingredients}
+                </p>
+                <span className="reel-dish-price">{lightboxVideo.price}</span>
+              </div>
+            )}
 
           </div>
         </div>
