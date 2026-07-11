@@ -648,11 +648,11 @@ function DishCardMedia({ dish }) {
       <video
         ref={videoRef}
         className="dish-grid-img"
-        src={dish.video}
+        src={dish.video.replace('.mp4', '_grid.mp4')}
         loop
         muted
         playsInline
-        preload="none"
+        preload="metadata"
         poster={dish.photo}
       />
     )
