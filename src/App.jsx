@@ -886,7 +886,7 @@ function App() {
         </div>
       )}
 
-      {/* 6. INSTA REEL WIDGET OVERLAY (Minimalist video player screen) */}
+      {/* 6. INSTA REEL WIDGET OVERLAY (Empty, clean video player screen) */}
       {lightboxVideo && (
         <div className={`video-lightbox ${isClosing ? 'closing' : 'open'}`} onClick={closeLightbox}>
           <div className="reel-container" onClick={closeLightbox}>
@@ -900,58 +900,6 @@ function App() {
               src={lightboxVideo.video}
               poster={lightboxVideo.photo}
             />
-
-            {/* Right Side Actions Column (Like, Share, Save only) */}
-            <div className="reel-actions-column">
-              {/* Like / Heart Action */}
-              <button 
-                className={`reel-action-btn ${likedDishes[lightboxVideo.id] ? 'liked' : ''}`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleLike(lightboxVideo.id);
-                }}
-              >
-                <div className="action-icon-circle">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill={likedDishes[lightboxVideo.id] ? '#ff3040' : 'none'} stroke={likedDishes[lightboxVideo.id] ? '#ff3040' : 'currentColor'} strokeWidth="2">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                  </svg>
-                </div>
-                <span className="action-label">{likedDishes[lightboxVideo.id] ? '2.5k' : '2.4k'}</span>
-              </button>
-
-              {/* Share Action */}
-              <button 
-                className="reel-action-btn" 
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleShare();
-                }}
-              >
-                <div className="action-icon-circle">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <line x1="22" y1="2" x2="11" y2="13" />
-                    <polygon points="22 2 15 22 11 13 2 9 22 2" />
-                  </svg>
-                </div>
-                <span className="action-label">Share</span>
-              </button>
-
-              {/* Bookmark Save Action */}
-              <button 
-                className={`reel-action-btn ${bookmarkedDishes[lightboxVideo.id] ? 'active' : ''}`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  toggleBookmark(lightboxVideo.id);
-                }}
-              >
-                <div className="action-icon-circle">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill={bookmarkedDishes[lightboxVideo.id] ? '#ffc107' : 'none'} stroke={bookmarkedDishes[lightboxVideo.id] ? '#ffc107' : 'currentColor'} strokeWidth="2">
-                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
-                  </svg>
-                </div>
-                <span className="action-label">Save</span>
-              </button>
-            </div>
 
           </div>
         </div>
