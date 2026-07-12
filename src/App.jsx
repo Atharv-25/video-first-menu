@@ -954,14 +954,7 @@ function App() {
             {/* Seamless custom loader spinner (Fades out when video plays) */}
             {!isVideoLoaded && (
               <div className="reel-loader">
-                <div className="steam-bowl">
-                  <div className="steam-wisps">
-                    <div className="wisp wisp-1"></div>
-                    <div className="wisp wisp-2"></div>
-                    <div className="wisp wisp-3"></div>
-                  </div>
-                  <span className="bowl-icon">🍛</span>
-                </div>
+                <div className="reel-spinner" />
               </div>
             )}
 

@@ -973,7 +973,7 @@ body {
   padding: 0 20px 24px 20px;
 }
 
-/* 7. CUSTOM REELS LOADER — STEAMING BOWL */
+/* 7. REELS LOADER */
 .reel-loader {
   position: absolute;
   inset: 0;
@@ -985,55 +985,11 @@ body {
   border-radius: 20px;
 }
 
-.steam-bowl {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-}
-
-.bowl-icon {
-  font-size: 48px;
-  filter: drop-shadow(0 2px 8px rgba(255,255,255,0.15));
-  animation: bowlPulse 1.5s ease-in-out infinite;
-}
-
-@keyframes bowlPulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.06); }
-}
-
-.steam-wisps {
-  position: absolute;
-  bottom: 38px;
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-}
-
-.wisp {
-  width: 3px;
-  height: 18px;
-  background: rgba(255, 255, 255, 0.5);
+.reel-spinner {
+  width: 28px;
+  height: 28px;
+  border: 2.5px solid rgba(255, 255, 255, 0.12);
+  border-top-color: #fff;
   border-radius: 50%;
-  animation: steamRise 1.2s ease-out infinite;
-}
-
-.wisp-1 { animation-delay: 0s; }
-.wisp-2 { animation-delay: 0.3s; }
-.wisp-3 { animation-delay: 0.6s; }
-
-@keyframes steamRise {
-  0% {
-    opacity: 0.7;
-    transform: translateY(0) scaleX(1);
-  }
-  50% {
-    opacity: 0.4;
-    transform: translateY(-14px) scaleX(1.8);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(-28px) scaleX(2.5);
-  }
+  animation: spin 0.7s linear infinite;
 }
