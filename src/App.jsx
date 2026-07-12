@@ -927,9 +927,9 @@ function App() {
       }
     }
     
-    // Centered overlay sizing (80% viewport size capped at max dimensions)
-    const targetWidth = Math.min(window.innerWidth * 0.8, 400)
-    const targetHeight = Math.min(window.innerHeight * 0.8, 700)
+    // Centered overlay sizing (84% viewport size leaving exactly 8% space on all sides)
+    const targetWidth = Math.min(window.innerWidth * 0.84, 420)
+    const targetHeight = Math.min(window.innerHeight * 0.84, 730)
     const targetTop = (window.innerHeight - targetHeight) / 2
     const targetLeft = (window.innerWidth - targetWidth) / 2
     
