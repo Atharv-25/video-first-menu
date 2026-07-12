@@ -960,7 +960,7 @@ function App() {
                     <div className="wisp wisp-2"></div>
                     <div className="wisp wisp-3"></div>
                   </div>
-                  <span className="bowl-icon">🍜</span>
+                  <span className="bowl-icon">🍛</span>
                 </div>
               </div>
             )}
