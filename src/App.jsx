@@ -753,6 +753,18 @@ function App() {
     alert('✨ Saffron Reel link copied to clipboard!')
   }
 
+  // Lock background body scroll when any modal or lightbox overlay is active
+  useEffect(() => {
+    if (lightboxVideo || isCartOpen || activeDish || isAiOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+    return () => {
+      document.body.style.overflow = 'unset'
+    }
+  }, [lightboxVideo, isCartOpen, activeDish, isAiOpen])
+
   // Combined Filter logic (Category + Search Query + AI Quick Filter)
   const filteredDishes = DISHES_DATA.filter(dish => {
     // 1. Category Filter
