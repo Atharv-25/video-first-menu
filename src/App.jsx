@@ -631,7 +631,7 @@ function DishCardMedia({ dish }) {
           }
         }
       },
-      { threshold: 0.8 } // High threshold ensures max 1-2 videos play simultaneously
+      { threshold: 0.3 } // Lower threshold so videos start playing sooner as they scroll in
     )
 
     if (videoRef.current) {
@@ -658,7 +658,7 @@ function DishCardMedia({ dish }) {
     )
   }
 
-  return <img className="dish-grid-img" src={dish.photo} alt={dish.name} />
+  return <img className="dish-grid-img" src={dish.photo} alt={dish.name} loading="lazy" />
 }
 
 function App() {
