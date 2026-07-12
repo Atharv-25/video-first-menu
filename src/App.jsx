@@ -1233,14 +1233,7 @@ function App() {
                     <span className="cart-subtotal-value">₹{subtotal}</span>
                   </div>
                   <div className="cart-waiter-banner">
-                    <div className="offline-directions-title">DIRECTIONS TO ORDER</div>
-                    <p className="offline-directions-text">
-                      Waiters don't read minds (yet). If you're still waiting for your food to magically materialize via telepathy, we suggest waving down a human waiter with a warm smile (no aggressive snaps, please).
-                    </p>
-                    <p className="offline-directions-subtext">
-                      Once they arrive, read these selected items out loud one by one, point to your screen, and let them write it down. Have a good one!
-                    </p>
-                    <div className="offline-directions-badge">🛎️ ORDER OFFLINE</div>
+                    Waiters don't read minds (yet). If you're waiting for telepathy to work, try waving at a human with a warm smile (no snaps, please).
                   </div>
                 </div>
               );
