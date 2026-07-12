@@ -680,6 +680,22 @@ function App() {
   const [clickedCardRect, setClickedCardRect] = useState(null)
   const [isHeroAnimating, setIsHeroAnimating] = useState(false)
 
+  // Preemptive preloading for high-res videos to minimize click loading time
+  const preloadedVideos = useRef({})
+
+  const handleCardPointerDown = (videoUrl) => {
+    if (!videoUrl) return
+    if (preloadedVideos.current[videoUrl]) return
+
+    const tempVideo = document.createElement('video')
+    tempVideo.src = videoUrl
+    tempVideo.preload = 'auto'
+    tempVideo.muted = true
+    tempVideo.load()
+    
+    preloadedVideos.current[videoUrl] = tempVideo
+  }
+
   // Reels Interaction States
   const [likedDishes, setLikedDishes] = useState({})
   const [bookmarkedDishes, setBookmarkedDishes] = useState({})
@@ -891,6 +907,8 @@ function App() {
             key={dish.id} 
             className="dish-grid-card glass glass-interactive"
             onClick={(e) => handleCardClick(dish, e)}
+            onMouseEnter={() => handleCardPointerDown(dish.video)}
+            onTouchStart={() => handleCardPointerDown(dish.video)}
           >
             <div className="dish-grid-media-box">
               <DishCardMedia dish={dish} />
@@ -966,6 +984,7 @@ function App() {
               loop 
               muted
               playsInline
+              preload="auto"
               src={lightboxVideo.video}
               onPlaying={() => setIsVideoLoaded(true)}
               style={{
