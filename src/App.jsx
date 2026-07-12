@@ -1233,7 +1233,14 @@ function App() {
                     <span className="cart-subtotal-value">₹{subtotal}</span>
                   </div>
                   <div className="cart-waiter-banner">
-                    Show this list to your waiter to order 🛎️
+                    <div className="offline-directions-title">DIRECTIONS TO ORDER</div>
+                    <p className="offline-directions-text">
+                      We don't need to tell you how to order food, do we? If you really forgot how to talk to a human, we suggest waving at your waiter with a warm smile (no aggressive finger snaps, please).
+                    </p>
+                    <p className="offline-directions-subtext">
+                      If that’s not an option, read these items out loud one by one, point to your screen, and let them note it down. Have a good one!
+                    </p>
+                    <div className="offline-directions-badge">🛎️ ORDER OFFLINE</div>
                   </div>
                 </div>
               );
