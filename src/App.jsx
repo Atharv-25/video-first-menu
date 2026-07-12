@@ -1233,7 +1233,7 @@ function App() {
                     <span className="cart-subtotal-value">₹{subtotal}</span>
                   </div>
                   <div className="cart-waiter-banner">
-                    Waiters don't read minds (yet). If you're waiting for telepathy to work, try waving at a human with a warm smile (no snaps, please).
+                    Waiters don't read minds (yet). If you're waiting for telepathy to work, try waving at a waiter nearby you with a warm smile (no snaps, please) and order.
                   </div>
                 </div>
               );
