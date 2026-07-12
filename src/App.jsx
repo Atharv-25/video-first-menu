@@ -1149,6 +1149,7 @@ function App() {
             </div>
           </div>
         </div>
+      )}
       {/* 8. TABLE ORDERS CART DRAW SHEET */}
       {isCartOpen && (
         <div className="cart-modal-backdrop" onClick={() => setIsCartOpen(false)}>
