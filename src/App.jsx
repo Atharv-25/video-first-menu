@@ -679,6 +679,8 @@ function App() {
   const [isVideoLoaded, setIsVideoLoaded] = useState(false)
   const [clickedCardRect, setClickedCardRect] = useState(null)
   const [isHeroAnimating, setIsHeroAnimating] = useState(false)
+  const [activeReelIndex, setActiveReelIndex] = useState(0)
+  const viewportRef = useRef(null)
 
   // Preemptive preloading for high-res videos to minimize click loading time
   const preloadedVideos = useRef({})
@@ -837,6 +839,18 @@ function App() {
   // Handles smooth Hero zoom-back close transition
   const closeLightbox = () => {
     setIsClosing(true)
+    
+    // Find the current active dish's card rect to zoom back to it dynamically!
+    const videoDishes = filteredDishes.filter(d => d.hasVideo)
+    const currentActiveDish = videoDishes[activeReelIndex]
+    if (currentActiveDish) {
+      const cardEl = document.querySelector(`[data-dish-id="${currentActiveDish.id}"]`)
+      if (cardEl) {
+        const mediaBox = cardEl.querySelector('.dish-grid-media-box') || cardEl
+        setClickedCardRect(mediaBox.getBoundingClientRect())
+      }
+    }
+
     // Container morphs back to card position (0.45s), then backdrop fades out (0.4s)
     // Total animation time ~500ms before cleanup
     setTimeout(() => {
@@ -866,6 +880,32 @@ function App() {
       }, 30)
     } else {
       setActiveDish(dish)
+    }
+  }
+
+  // Scroll viewport to the clicked video index on initial open
+  useEffect(() => {
+    if (lightboxVideo && viewportRef.current) {
+      const videoDishes = filteredDishes.filter(d => d.hasVideo)
+      const index = videoDishes.findIndex(d => d.id === lightboxVideo.id)
+      if (index !== -1) {
+        setActiveReelIndex(index)
+        // Scroll instantly to that card
+        const clientHeight = viewportRef.current.clientHeight
+        viewportRef.current.scrollTop = index * clientHeight
+      }
+    }
+  }, [lightboxVideo])
+
+  const handleReelScroll = (e) => {
+    const scrollTop = e.currentTarget.scrollTop
+    const clientHeight = e.currentTarget.clientHeight
+    if (clientHeight === 0) return
+    const videoDishes = filteredDishes.filter(d => d.hasVideo)
+    const index = Math.round(scrollTop / clientHeight)
+    if (index >= 0 && index < videoDishes.length && index !== activeReelIndex) {
+      setActiveReelIndex(index)
+      setIsVideoLoaded(false) // Trigger spinner fade-in for new video
     }
   }
 
@@ -966,6 +1006,7 @@ function App() {
         {filteredDishes.map((dish) => (
           <div 
             key={dish.id} 
+            data-dish-id={dish.id}
             className="dish-grid-card glass glass-interactive"
             onClick={(e) => handleCardClick(dish, e)}
             onMouseEnter={() => handleCardPointerDown(dish.video)}
@@ -1019,93 +1060,114 @@ function App() {
       )}
 
       {/* 6. INSTA REEL WIDGET OVERLAY (Empty, clean video player screen with shared element transition) */}
-      {lightboxVideo && (
-        <div 
-          className={`video-lightbox ${isClosing ? 'closing' : 'open'}`} 
-          onClick={closeLightbox}
-        >
+      {lightboxVideo && (() => {
+        const videoDishes = filteredDishes.filter(d => d.hasVideo);
+        return (
           <div 
-            className="reel-container" 
+            className={`video-lightbox ${isClosing ? 'closing' : 'open'}`} 
             onClick={closeLightbox}
-            style={getHeroStyle()}
           >
-            
-            {/* Seamless custom loader spinner (Fades out when video plays) */}
-            {!isVideoLoaded && (
-              <div className="reel-loader">
-                <div className="reel-spinner" />
-              </div>
-            )}
+            <div 
+              ref={viewportRef}
+              className="reels-viewport"
+              onScroll={handleReelScroll}
+              style={getHeroStyle()}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {videoDishes.map((dish, index) => {
+                const isCurrent = index === activeReelIndex;
+                const orderedItem = tableOrders.find(item => item.id === dish.id);
+                return (
+                  <div key={dish.id} className="reel-card" onClick={closeLightbox}>
+                    <div className="reel-container">
+                      
+                      {/* Seamless custom loader spinner (Only for active video while loading) */}
+                      {isCurrent && !isVideoLoaded && (
+                        <div className="reel-loader">
+                          <div className="reel-spinner" />
+                        </div>
+                      )}
 
-            {/* Reel Video Player (Muted autoplay, keyed, and fades in smoothly) */}
-            <video 
-              key={lightboxVideo.id}
-              className="reel-video" 
-              autoPlay 
-              loop 
-              muted
-              playsInline
-              preload="auto"
-              src={lightboxVideo.video}
-              onPlaying={() => setIsVideoLoaded(true)}
-              style={{
-                opacity: isVideoLoaded ? 1 : 0,
-                transition: 'opacity 0.4s ease'
-              }}
-            />
+                      {/* Reel Video Player */}
+                      {isCurrent ? (
+                        <video 
+                          key={dish.id}
+                          className="reel-video" 
+                          autoPlay 
+                          loop 
+                          muted
+                          playsInline
+                          preload="auto"
+                          src={dish.video}
+                          onPlaying={() => setIsVideoLoaded(true)}
+                          style={{
+                            opacity: isVideoLoaded ? 1 : 0,
+                            transition: 'opacity 0.4s ease'
+                          }}
+                        />
+                      ) : (
+                        <img 
+                          className="reel-video" 
+                          src={dish.photo} 
+                          alt={dish.name} 
+                          style={{ objectFit: 'cover' }}
+                        />
+                      )}
 
-            {/* Dish info overlay at bottom of reel */}
-            {isVideoLoaded && !isClosing && (() => {
-              const orderedItem = tableOrders.find(item => item.id === lightboxVideo.id);
-              return (
-                <div className="reel-dish-info" onClick={(e) => e.stopPropagation()}>
-                  <p className="reel-dish-desc">{lightboxVideo.description}</p>
-                  <p className="reel-dish-ingredients">
-                    <span className="reel-ingredients-label">🧂 </span>
-                    {lightboxVideo.ingredients}
-                  </p>
-                  <div className="reel-action-row">
-                    {!orderedItem ? (
-                      <button 
-                        className="reel-add-btn"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          addToTable(lightboxVideo);
-                        }}
-                      >
-                        Add to Table
-                      </button>
-                    ) : (
-                      <div className="reel-qty-selector">
-                        <button 
-                          className="reel-qty-btn"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            removeFromTable(lightboxVideo.id);
-                          }}
-                        >
-                          −
-                        </button>
-                        <span className="reel-qty-val">{orderedItem.quantity} in Table</span>
-                        <button 
-                          className="reel-qty-btn"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            addToTable(lightboxVideo);
-                          }}
-                        >
-                          +
-                        </button>
-                      </div>
-                    )}
+                      {/* Dish info overlay at bottom of reel */}
+                      {isCurrent && isVideoLoaded && !isClosing && (
+                        <div className="reel-dish-info" onClick={(e) => e.stopPropagation()}>
+                          <p className="reel-dish-desc">{dish.description}</p>
+                          <p className="reel-dish-ingredients">
+                            <span className="reel-ingredients-label">🧂 </span>
+                            {dish.ingredients}
+                          </p>
+                          <div className="reel-action-row">
+                            {!orderedItem ? (
+                              <button 
+                                className="reel-add-btn"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  addToTable(dish);
+                                }}
+                              >
+                                Add to Table
+                              </button>
+                            ) : (
+                              <div className="reel-qty-selector">
+                                <button 
+                                  className="reel-qty-btn"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    removeFromTable(dish.id);
+                                  }}
+                                >
+                                  −
+                                </button>
+                                <span className="reel-qty-val">{orderedItem.quantity} in Table</span>
+                                <button 
+                                  className="reel-qty-btn"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    addToTable(dish);
+                                  }}
+                                >
+                                  +
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                    </div>
                   </div>
-                </div>
-              );
-            })()}
-
+                );
+              })}
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
       {/* 7. SAFFRON AI CHEF ASSISTANT DRAW SHEET */}
       {isAiOpen && (
         <div className="ai-modal-backdrop" onClick={() => setIsAiOpen(false)}>
