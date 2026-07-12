@@ -602,6 +602,16 @@ const DISHES_DATA = [
   }
 ]
 
+const DISHES_DATA_MAPPED = DISHES_DATA.map(dish => {
+  if (dish.hasVideo && dish.video) {
+    return {
+      ...dish,
+      photo: dish.video.replace('.mp4', '_first.jpg')
+    }
+  }
+  return dish
+})
+
 // 6 Menu Categories
 const CATEGORIES_DATA = [
   { id: 'All', name: 'All', icon: <AllIcon /> },
@@ -768,7 +778,7 @@ function App() {
   }, [lightboxVideo, isCartOpen, activeDish, isAiOpen])
 
   // Combined Filter logic (Category + Search Query + AI Quick Filter)
-  const filteredDishes = DISHES_DATA.filter(dish => {
+  const filteredDishes = DISHES_DATA_MAPPED.filter(dish => {
     // 1. Category Filter
     if (activeCategory === 'All') {
       if (!dish.hasVideo) return false
