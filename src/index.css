@@ -91,7 +91,7 @@ body {
 
 /* 1. TOP HEADER NAVIGATION */
 .minimal-header {
-  height: 60px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -234,7 +234,7 @@ body {
 
 /* 2. GOOGLE WIDGET STYLE CATEGORY BAR */
 .google-category-container {
-  padding: 18px 20px 22px 20px; /* Enhanced separation padding */
+  padding: 10px 20px 10px 20px;
   background-color: var(--bg-dark);
   position: relative;
   z-index: 90;
@@ -243,11 +243,11 @@ body {
 .google-category-bar {
   background-color: #ffffff;
   border-radius: 9999px;
-  height: 66px; /* Taller premium pill height */
+  height: 52px;
   display: flex;
   align-items: center;
   padding: 0 10px;
-  box-shadow: 0 6px 26px rgba(0, 0, 0, 0.32), 0 2px 6px rgba(0, 0, 0, 0.12); /* Layered soft shadows */
+  box-shadow: 0 6px 26px rgba(0, 0, 0, 0.32), 0 2px 6px rgba(0, 0, 0, 0.12);
   border: 1px solid rgba(0, 0, 0, 0.04);
   overflow: hidden;
   position: relative;
@@ -331,7 +331,7 @@ body {
 
 /* 3. CATEGORY HEADER TITLE */
 .category-section-header {
-  padding: 24px 20px 12px 20px;
+  padding: 12px 20px 6px 20px;
 }
 
 .category-section-title {
