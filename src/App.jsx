@@ -641,7 +641,7 @@ function DishCardMedia({ dish }) {
           }
         }
       },
-      { threshold: 0.3 } // Lower threshold so videos start playing sooner as they scroll in
+      { threshold: 0.7 } // High threshold ensures max 1-2 videos play simultaneously on mobile
     )
 
     if (videoRef.current) {
@@ -662,7 +662,7 @@ function DishCardMedia({ dish }) {
         loop
         muted
         playsInline
-        preload="metadata"
+        preload="none"
         poster={dish.photo}
       />
     )

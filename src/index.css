@@ -364,13 +364,9 @@ body {
   overflow: hidden;
   cursor: pointer;
   border-radius: 22px;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  transform: translate3d(0, 0, 0);
-  -webkit-transform: translate3d(0, 0, 0);
   /* Modern CSS scroll optimization properties */
   content-visibility: auto;
-  contain-intrinsic-size: 260px;
+  contain-intrinsic-size: auto 230px;
   contain: paint;
 }
 
@@ -387,9 +383,6 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  will-change: contents;
 }
 
 .dish-grid-info {
