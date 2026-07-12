@@ -1235,10 +1235,10 @@ function App() {
                   <div className="cart-waiter-banner">
                     <div className="offline-directions-title">DIRECTIONS TO ORDER</div>
                     <p className="offline-directions-text">
-                      We don't need to tell you how to order food, do we? If you really forgot how to talk to a human, we suggest waving at your waiter with a warm smile (no aggressive finger snaps, please).
+                      Waiters don't read minds (yet). If you're still waiting for your food to magically materialize via telepathy, we suggest waving down a human waiter with a warm smile (no aggressive snaps, please).
                     </p>
                     <p className="offline-directions-subtext">
-                      If that’s not an option, read these items out loud one by one, point to your screen, and let them note it down. Have a good one!
+                      Once they arrive, read these selected items out loud one by one, point to your screen, and let them write it down. Have a good one!
                     </p>
                     <div className="offline-directions-badge">🛎️ ORDER OFFLINE</div>
                   </div>
