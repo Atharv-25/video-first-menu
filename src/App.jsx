@@ -1081,15 +1081,19 @@ function App() {
                   <div key={dish.id} className="reel-card" onClick={closeLightbox}>
                     <div className="reel-container">
                       
-                      {/* Seamless custom loader spinner (Only for active video while loading) */}
-                      {isCurrent && !isVideoLoaded && (
-                        <div className="reel-loader">
-                          <div className="reel-spinner" />
-                        </div>
-                      )}
+                      {/* Static dish image serves as immediate colorful background placeholder */}
+                      <img 
+                        className="reel-video" 
+                        src={dish.photo} 
+                        alt={dish.name} 
+                        style={{ 
+                          objectFit: 'cover',
+                          zIndex: 1
+                        }}
+                      />
 
-                      {/* Reel Video Player */}
-                      {isCurrent ? (
+                      {/* Reel Video Player (Only rendered for active item, fades in on top of the image once ready) */}
+                      {isCurrent && (
                         <video 
                           key={dish.id}
                           className="reel-video" 
@@ -1102,15 +1106,9 @@ function App() {
                           onPlaying={() => setIsVideoLoaded(true)}
                           style={{
                             opacity: isVideoLoaded ? 1 : 0,
-                            transition: 'opacity 0.4s ease'
+                            transition: 'opacity 0.4s ease',
+                            zIndex: 2 // Sit on top of the static image
                           }}
-                        />
-                      ) : (
-                        <img 
-                          className="reel-video" 
-                          src={dish.photo} 
-                          alt={dish.name} 
-                          style={{ objectFit: 'cover' }}
                         />
                       )}
 
