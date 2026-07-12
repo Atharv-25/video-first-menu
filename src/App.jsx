@@ -696,6 +696,39 @@ function App() {
     preloadedVideos.current[videoUrl] = tempVideo
   }
 
+  // Table Order / Cart States
+  const [tableOrders, setTableOrders] = useState([])
+  const [isCartOpen, setIsCartOpen] = useState(false)
+
+  const addToTable = (dish) => {
+    setTableOrders(prev => {
+      const existing = prev.find(item => item.id === dish.id)
+      if (existing) {
+        return prev.map(item => 
+          item.id === dish.id ? { ...item, quantity: item.quantity + 1 } : item
+        )
+      }
+      return [...prev, { ...dish, quantity: 1 }]
+    })
+  }
+
+  const removeFromTable = (dishId) => {
+    setTableOrders(prev => {
+      const existing = prev.find(item => item.id === dishId)
+      if (!existing) return prev
+      if (existing.quantity === 1) {
+        return prev.filter(item => item.id !== dishId)
+      }
+      return prev.map(item => 
+        item.id === dishId ? { ...item, quantity: item.quantity - 1 } : item
+      )
+    })
+  }
+
+  const removeAllFromTable = (dishId) => {
+    setTableOrders(prev => prev.filter(item => item.id !== dishId))
+  }
+
   // Reels Interaction States
   const [likedDishes, setLikedDishes] = useState({})
   const [bookmarkedDishes, setBookmarkedDishes] = useState({})
@@ -864,6 +897,22 @@ function App() {
       {/* 1. MINIMAL HEADER BAR */}
       <header className="minimal-header">
         <span className="minimal-header-title">FirstFrame</span>
+        <button 
+          className="header-cart-btn" 
+          onClick={() => setIsCartOpen(true)}
+          aria-label="View Table Orders"
+        >
+          <svg className="cart-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+          {tableOrders.length > 0 && (
+            <span className="cart-badge">
+              {tableOrders.reduce((total, item) => total + item.quantity, 0)}
+            </span>
+          )}
+        </button>
       </header>
 
 
@@ -994,15 +1043,53 @@ function App() {
             />
 
             {/* Dish info overlay at bottom of reel */}
-            {isVideoLoaded && !isClosing && (
-              <div className="reel-dish-info" onClick={(e) => e.stopPropagation()}>
-                <p className="reel-dish-desc">{lightboxVideo.description}</p>
-                <p className="reel-dish-ingredients">
-                  <span className="reel-ingredients-label">🧂 </span>
-                  {lightboxVideo.ingredients}
-                </p>
-              </div>
-            )}
+            {isVideoLoaded && !isClosing && (() => {
+              const orderedItem = tableOrders.find(item => item.id === lightboxVideo.id);
+              return (
+                <div className="reel-dish-info" onClick={(e) => e.stopPropagation()}>
+                  <p className="reel-dish-desc">{lightboxVideo.description}</p>
+                  <p className="reel-dish-ingredients">
+                    <span className="reel-ingredients-label">🧂 </span>
+                    {lightboxVideo.ingredients}
+                  </p>
+                  <div className="reel-action-row">
+                    {!orderedItem ? (
+                      <button 
+                        className="reel-add-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          addToTable(lightboxVideo);
+                        }}
+                      >
+                        Add to Table
+                      </button>
+                    ) : (
+                      <div className="reel-qty-selector">
+                        <button 
+                          className="reel-qty-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            removeFromTable(lightboxVideo.id);
+                          }}
+                        >
+                          −
+                        </button>
+                        <span className="reel-qty-val">{orderedItem.quantity} in Table</span>
+                        <button 
+                          className="reel-qty-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            addToTable(lightboxVideo);
+                          }}
+                        >
+                          +
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
 
           </div>
         </div>
@@ -1060,6 +1147,100 @@ function App() {
                 </button>
               )}
             </div>
+          </div>
+        </div>
+      {/* 8. TABLE ORDERS CART DRAW SHEET */}
+      {isCartOpen && (
+        <div className="cart-modal-backdrop" onClick={() => setIsCartOpen(false)}>
+          <div className="cart-modal-content glass" onClick={(e) => e.stopPropagation()}>
+            <div className="cart-header">
+              <div className="cart-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                  <line x1="3" y1="6" x2="21" y2="6"></line>
+                  <path d="M16 10a4 4 0 0 1-8 0"></path>
+                </svg>
+                <span>Table Orders</span>
+              </div>
+              <button className="cart-close-btn" onClick={() => setIsCartOpen(false)}>
+                <CloseIcon />
+              </button>
+            </div>
+
+            <div className="cart-items-list">
+              {tableOrders.length === 0 ? (
+                <div className="cart-empty-state">
+                  <span className="cart-empty-icon">🍽️</span>
+                  <p className="cart-empty-text">Your table is empty</p>
+                  <p className="cart-empty-subtext">Add dishes from videos to build your order list</p>
+                </div>
+              ) : (
+                tableOrders.map(item => (
+                  <div key={item.id} className="cart-item-card">
+                    <div className="cart-item-info">
+                      <div className="cart-item-name">{item.name}</div>
+                      <div className="cart-item-price-qty">
+                        <span className="cart-item-price">{item.price}</span>
+                        <span className="cart-item-multiplier">×</span>
+                        <span className="cart-item-qty">{item.quantity}</span>
+                      </div>
+                    </div>
+                    <div className="cart-item-actions">
+                      <div className="cart-item-qty-controls">
+                        <button 
+                          className="cart-qty-adjust-btn"
+                          onClick={() => removeFromTable(item.id)}
+                        >
+                          −
+                        </button>
+                        <span className="cart-qty-number">{item.quantity}</span>
+                        <button 
+                          className="cart-qty-adjust-btn"
+                          onClick={() => addToTable(item)}
+                        >
+                          +
+                        </button>
+                      </div>
+                      <button 
+                        className="cart-item-remove-btn"
+                        onClick={() => removeAllFromTable(item.id)}
+                        aria-label="Remove item"
+                      >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <polyline points="3 6 5 6 21 6"></polyline>
+                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {tableOrders.length > 0 && (() => {
+              // Extract numeric value from price strings like "₹120"
+              const getNumericPrice = (priceStr) => {
+                const num = parseInt(priceStr.replace(/[^0-9]/g, ''), 10);
+                return isNaN(num) ? 0 : num;
+              };
+              const subtotal = tableOrders.reduce((sum, item) => sum + (getNumericPrice(item.price) * item.quantity), 0);
+
+              return (
+                <div className="cart-footer">
+                  <div className="cart-subtotal-row">
+                    <span className="cart-subtotal-label">Subtotal</span>
+                    <span className="cart-subtotal-value">₹{subtotal}</span>
+                  </div>
+                  <button className="cart-place-order-btn" onClick={() => {
+                    alert('Order placed and sent to the Saffron kitchen! 👨‍🍳🔥');
+                    setTableOrders([]);
+                    setIsCartOpen(false);
+                  }}>
+                    Place Table Order
+                  </button>
+                </div>
+              );
+            })()}
           </div>
         </div>
       )}
