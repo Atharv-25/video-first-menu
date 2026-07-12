@@ -1329,25 +1329,21 @@ body {
   font-size: 18px;
 }
 
-.cart-place-order-btn {
-  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-  color: #fff;
-  border: none;
+.cart-waiter-banner {
+  background: rgba(255, 215, 0, 0.06);
+  border: 1.5px dashed rgba(255, 215, 0, 0.35);
   border-radius: 14px;
   padding: 14px;
-  font-size: 15px;
+  text-align: center;
+  color: #FFD700;
+  font-family: var(--font-body);
+  font-size: 13px;
   font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
-  transition: all 0.2s ease;
-}
-
-.cart-place-order-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.4);
-}
-
-.cart-place-order-btn:active {
-  transform: translateY(0);
+  letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 

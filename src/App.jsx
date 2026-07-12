@@ -1232,13 +1232,9 @@ function App() {
                     <span className="cart-subtotal-label">Subtotal</span>
                     <span className="cart-subtotal-value">₹{subtotal}</span>
                   </div>
-                  <button className="cart-place-order-btn" onClick={() => {
-                    alert('Order placed and sent to the Saffron kitchen! 👨‍🍳🔥');
-                    setTableOrders([]);
-                    setIsCartOpen(false);
-                  }}>
-                    Place Table Order
-                  </button>
+                  <div className="cart-waiter-banner">
+                    Show this list to your waiter to order 🛎️
+                  </div>
                 </div>
               );
             })()}
